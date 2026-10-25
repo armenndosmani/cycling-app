@@ -1,0 +1,42 @@
+# Secrets
+.env*
+!.env.example
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+
+# Logs
+*.log
+
+# Backend (Maven / Java)
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+hs_err_pid*
+
+# Mobile (Node / Expo)
+node_modules/
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+ios/
+android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+npm-debug.*
+yarn-error.*
+.metro-health-check*
+*.tsbuildinfo
