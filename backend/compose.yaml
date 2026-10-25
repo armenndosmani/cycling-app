@@ -1,0 +1,10 @@
+# Local development only. Spring Boot starts this automatically on bootRun.
+services:
+  postgres:
+    image: 'postgres:18'
+    environment:
+      - 'POSTGRES_DB=cycling'
+      - 'POSTGRES_USER=cycling'
+      - 'POSTGRES_PASSWORD=local-dev-only'
+    ports:
+      - '5432'
