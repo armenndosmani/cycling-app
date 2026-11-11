@@ -32,14 +32,16 @@ Self-hosted on our own server: map tiles (Protomaps + Martin), routing (GraphHop
 
 Backend (run from `backend/`, needs JDK 25 as `JAVA_HOME` and Docker running):
 - `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`: start the API on port 8080; Postgres starts automatically from `compose.yaml`. The `dev` profile enables `/v3/api-docs` and Swagger UI (off by default)
-- `./mvnw verify`: build and run tests (Testcontainers starts Postgres)
+- `./mvnw verify`: build and run tests (Testcontainers starts Postgres). Fails on unformatted code
+- `./mvnw spring-javaformat:apply`: format the backend (spring-javaformat, tabs)
 - Only `/actuator/health` is exposed; keep other actuator endpoints closed
 - Secure by default (`config/SecurityConfig.java`): every endpoint returns 401 unless a rule opens it. A new feature opens only its own endpoints, with an explicit authorization rule and a test for it
 - Errors are RFC 9457 Problem Details (`web/ApiExceptionHandler.java`); never return exception messages, stack traces or rejected input values
 
 Mobile (run from `mobile/`):
 - `npx expo start`: dev server. The app calls the backend on the dev server's host, port 8080, unless `EXPO_PUBLIC_API_URL` is set (see `mobile/.env.example`)
-- `npx tsc --noEmit` and `npx expo lint`: typecheck and lint, run both before declaring work done
+- `npx tsc --noEmit` and `npx expo lint`: typecheck and lint (lint includes the Prettier check), run both before declaring work done
+- `npm run format`: format the mobile code with Prettier
 - `npx expo install <pkg>`: add dependencies (never plain `npm install <pkg>`)
 
 ## Privacy rules (non-negotiable)

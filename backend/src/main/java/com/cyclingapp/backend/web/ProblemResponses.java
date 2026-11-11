@@ -15,13 +15,17 @@ public final class ProblemResponses {
 	private ProblemResponses() {
 	}
 
-	/** {@code detail} must be a fixed message, never user input: it is written without JSON escaping. */
+	/**
+	 * {@code detail} must be a fixed message, never user input: it is written without
+	 * JSON escaping.
+	 */
 	public static void write(HttpServletResponse response, HttpStatus status, String detail) throws IOException {
 		response.setStatus(status.value());
 		response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-		response.getWriter().write("""
-				{"type":"about:blank","title":"%s","status":%d,"detail":"%s"}"""
-			.formatted(status.getReasonPhrase(), status.value(), detail));
+		response.getWriter()
+			.write("""
+					{"type":"about:blank","title":"%s","status":%d,"detail":"%s"}""".formatted(status.getReasonPhrase(),
+					status.value(), detail));
 	}
 
 }

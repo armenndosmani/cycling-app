@@ -1,7 +1,7 @@
-import { Stack, ThemeProvider } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { Stack, ThemeProvider } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
-import { colors, navigationTheme } from "@/constants/theme";
+import { colors, navigationTheme } from '@/constants/theme';
 
 // The root view background comes from `backgroundColor` in app.json (needs expo-system-ui)
 export default function RootLayout() {

@@ -40,7 +40,7 @@ class ErrorHandlingTests {
 	@Test
 	void validationErrorsListTheInvalidFieldsWithoutTheirValues() throws Exception {
 		mvc.perform(post("/test/rides").contentType(MediaType.APPLICATION_JSON)
-				.content("{\"name\":\"\",\"code\":\"private-value\"}"))
+			.content("{\"name\":\"\",\"code\":\"private-value\"}"))
 			.andExpect(status().isBadRequest())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
 			.andExpect(jsonPath("$.title").value("Invalid request"))

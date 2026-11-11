@@ -21,7 +21,8 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * All API errors are RFC 9457 Problem Details. Responses never contain stack traces,
- * exception messages or rejected input values; unexpected errors are logged server-side only.
+ * exception messages or rejected input values; unexpected errors are logged server-side
+ * only.
  */
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -52,7 +53,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, problem, headers, HttpStatus.NOT_FOUND, request);
 	}
 
-	// Thrown inside controllers by method security; without these they would end up as 500s
+	// Thrown inside controllers by method security; without these they would end up as
+	// 500s
 	@ExceptionHandler(AuthenticationException.class)
 	ProblemDetail handleAuthentication(AuthenticationException ex) {
 		return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Authentication is required.");
