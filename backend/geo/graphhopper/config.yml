@@ -1,0 +1,75 @@
+# GraphHopper 11.1 for local development: one profile per discipline (docs/decisions.md).
+# Based on config-example.yml of the release. Changing profiles or encoded values needs a
+# re-import: stop the service and delete data/graphhopper.
+graphhopper:
+  datareader.file: /data/osm/region.osm.pbf
+  graph.location: /data/graphhopper
+  custom_models.directory: custom_models
+
+  # road: racing bike; gravel: city/trekking bike preferring unpaved surfaces;
+  # mtb: mountain bike; urban: city bike. Built-in models ship inside the jar.
+  profiles:
+    - name: road
+      custom_model_files: [racingbike.json, bike_elevation.json]
+    - name: gravel
+      custom_model_files: [bike.json, bike_elevation.json, gravel.json]
+    - name: mtb
+      custom_model_files: [mtb.json, bike_elevation.json]
+    - name: urban
+      custom_model_files: [bike.json, bike_elevation.json]
+
+  # Speed mode (contraction hierarchies) for all profiles: fast queries, no per-request
+  # custom models (the backend never sends any)
+  profiles_ch:
+    - profile: road
+    - profile: gravel
+    - profile: mtb
+    - profile: urban
+  profiles_lm: []
+
+  # surface is needed for the surface breakdown (path detail "surface")
+  graph.encoded_values: >-
+    bike_priority, bike_access, bike_average_speed,
+    racingbike_priority, racingbike_access, racingbike_average_speed,
+    mtb_priority, mtb_access, mtb_average_speed,
+    roundabout, bike_road_access, foot_road_access, average_slope, mtb_rating, hike_rating,
+    country, road_class, surface, track_type
+
+  # Elevation: NASA SRTM 3 arc-second (about 90 m), public domain. Tiles are downloaded
+  # once during the import (from the srtm.kurviger.de mirror GraphHopper uses) and cached
+  # in /data/srtm; nothing is downloaded while routing.
+  graph.elevation.provider: srtm
+  graph.elevation.cache_dir: /data/srtm
+  graph.elevation.interpolate: bilinear
+  graph.elevation.edge_smoothing: moving_average
+  graph.elevation.long_edge_sampling_distance: 60
+  graph.elevation.way_point_max_distance: 10
+
+  prepare.min_network_size: 200
+  prepare.subnetworks.threads: 1
+  routing.snap_preventions_default: tunnel, bridge, ferry
+  # Bikes never use motorways; leaving them out keeps the graph small
+  import.osm.ignored_highways: motorway
+  graph.dataaccess.default_type: RAM_STORE
+
+server:
+  application_connectors:
+    - type: http
+      port: 8989
+      # Inside the container; compose publishes the port on 127.0.0.1 only
+      bind_host: 0.0.0.0
+      max_request_header_size: 50k
+  # No request log: request URLs can contain coordinates
+  request_log:
+    appenders: []
+  admin_connectors:
+    - type: http
+      port: 8990
+      bind_host: 127.0.0.1
+logging:
+  appenders:
+    - type: console
+      time_zone: UTC
+      log_format: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  loggers:
+    "com.graphhopper.osm_warnings": "OFF"

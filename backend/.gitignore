@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local geo stack data (downloaded by geo/download-dev-data.sh) ###
+geo/data/
