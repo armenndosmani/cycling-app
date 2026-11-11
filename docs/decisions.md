@@ -25,3 +25,8 @@ Confirmed decisions only. One line each: `YYYY-MM-DD | decision | why`. Newest a
 2026-11-11 | Vulnerability gate in CI: npm audit (mobile) + OSV check of resolved Maven deps (backend), on every PR and weekly | Keeps the 0-vulnerability baseline without paid tools or NVD API keys
 2026-11-11 | Dependabot weekly; npm in lockfile-only mode so Expo SDK versions are never bumped automatically | Expo SDK upgrades must go through `npx expo install --fix`
 2026-11-11 | Claude Code guard hook (.claude/hooks/guard.mjs, Node) blocks .env access (except .env.example), git push to main and gh pr merge | Node runs the same on Windows and CI; branch protection remains the real enforcement
+2026-11-11 | Sign-in: email + one-time code as the base; Sign in with Apple and Sign in with Google as optional alternatives; no passwords | Least personal data and no password database to leak; one-tap sign-in for convenience
+2026-11-11 | Account recovery by email only; abuse prevention with rate limits plus blocking and reporting; no phone numbers | Keeps collected data minimal; phone numbers and CAPTCHAs add personal data or third parties
+2026-11-11 | Minimum age 16 to create an account; rides outside urban areas are 18+ only; hiking (if added later) is 18+ only | BA decision for rider safety; 16 works in every EU country without parental consent. Still open: how "urban" is defined and how age is confirmed (needs legal review)
+2026-11-11 | Hosting: Hetzner, EU (Germany) | EU data residency, flat pricing, enough memory to self-host routing
+2026-11-11 | Transactional email (sign-in codes, notifications): Mailjet | EU-based provider; needs a data processing agreement before launch
