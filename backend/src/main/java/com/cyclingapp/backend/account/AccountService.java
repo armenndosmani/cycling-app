@@ -22,10 +22,14 @@ public class AccountService {
 
 	private final CodeMailer mailer;
 
-	AccountService(UserRepository users, EmailCodeService codes, CodeMailer mailer) {
+	private final List<AccountDeletionHook> deletionHooks;
+
+	AccountService(UserRepository users, EmailCodeService codes, CodeMailer mailer,
+			List<AccountDeletionHook> deletionHooks) {
 		this.users = users;
 		this.codes = codes;
 		this.mailer = mailer;
+		this.deletionHooks = List.copyOf(deletionHooks);
 	}
 
 	@Transactional(readOnly = true)
@@ -75,10 +79,13 @@ public class AccountService {
 			return false;
 		}
 		codes.deleteAll(user.getEmail());
-		// Sessions and refresh tokens are deleted by the database (on delete cascade).
-		// Extension point: when routes and rides exist, delete saved routes, cancel
-		// upcoming rides the rider administers, remove their participation and show their
-		// chat messages as "Deleted rider" here (docs/specs/accounts.md).
+		// Each feature deletes its own data (saved routes so far). Sessions and refresh
+		// tokens are deleted by the database (on delete cascade). Still to come with
+		// rides:
+		// cancel upcoming rides the rider administers, remove their participation and
+		// show
+		// their chat messages as "Deleted rider" (docs/specs/accounts.md).
+		deletionHooks.forEach(hook -> hook.deleteAccountData(userId));
 		users.delete(user);
 		return true;
 	}

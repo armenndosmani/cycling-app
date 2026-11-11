@@ -94,5 +94,13 @@ Let a rider plan a cycling route on a map for their discipline (road, gravel, MT
 - **Routes used by events:** a ride keeps its own copy of the route. Editing or deleting the saved route never changes an existing ride.
 - **Backups:** deleted data stays in backups for at most 30 days (legal review pending).
 
+## Backend API (issue #38)
+All endpoints need an access token. Errors are Problem Details.
+- `POST /api/routing/route` `{"discipline": "ROAD|GRAVEL|MTB|URBAN", "points": [{"lat", "lon"}, ...]}` (2 to 27 points, destination may equal start) → `{"geometry": GeoJSON LineString with [lon, lat, ele], "distanceMeters", "ascendMeters" (null without elevation data), "elevationProfile": [[distanceMeters, elevationMeters], ...] (at most 300, null without elevation data), "surfaces": [{"surface", "meters"}, ...]}` (longest first; OSM surface values, "unknown" where not mapped). No route: 422 `urn:cycling:problem:route-not-found`. Routing down or slower than 5 s: 503 `urn:cycling:problem:routing-unavailable`.
+- `GET /api/places?q=...&lat=&lon=` (q 2 to 100 characters; lat and lon optional, together) → `[{"name", "label", "lat", "lon"}]`, at most 10. Search down: 503 `urn:cycling:problem:place-search-unavailable`.
+- `GET /api/routes` → own routes, most recently changed first: `[{"id", "name", "discipline", "distanceMeters", "ascendMeters", "updatedAt"}]`.
+- `POST /api/routes` `{"name", "note", "discipline", "points"}` → 201 with the full route. `PUT /api/routes/{id}` same body → 200. `GET /api/routes/{id}` → `{"id", "name", "note", "discipline", "points", "geometry", "distanceMeters", "ascendMeters", "elevationProfile", "surfaces", "createdAt", "updatedAt"}`. `DELETE /api/routes/{id}` → 204. Another rider's route or an unknown id: 404.
+- The server calculates the route when it is saved, and again on update only if the points or the discipline changed; calculated values sent by the app are ignored, so stored distances and geometry cannot be forged. Viewing never recalculates. Saving needs routing to be up (503 otherwise).
+
 ## Open questions
 - **Limits:** 25 waypoints and the 3-second target for routes up to 200 km are proposals, to confirm after the proof of concept. *(developer)*

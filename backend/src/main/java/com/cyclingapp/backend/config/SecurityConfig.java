@@ -53,6 +53,10 @@ public class SecurityConfig {
 			if (dev) {
 				auth.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
 			}
+			// Route planner (docs/specs/route-planner.md): signed-in riders only; saved
+			// routes
+			// are further limited to their owner in the queries
+			auth.requestMatchers("/api/routing/**", "/api/places", "/api/routes", "/api/routes/**").authenticated();
 			auth.anyRequest().authenticated();
 		})
 			// Access tokens: "Authorization: Bearer <jwt>"
