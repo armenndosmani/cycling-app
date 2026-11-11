@@ -1,6 +1,6 @@
 # Joining a ride, approvals, invitations and participants
 
-**Requested by:** Product baseline (`docs/product-context.md` sections 3D, 3E) and decisions of 2026-11-11 · **Date:** 2026-11-11 · **Status:** Draft
+**Requested by:** Product baseline (`docs/product-context.md` sections 3D, 3E) and decisions of 2026-11-11 · **Date:** 2026-11-11 · **Status:** Approved with defaults (BA may change them)
 
 ## Goal
 Let riders join a published ride according to its access mode (open, approval required, invite only), let the admin manage who rides, and give every confirmed participant a clear, private participant list. This is the "invite → approve" part of the core loop and the step before ride chat.
@@ -46,6 +46,7 @@ Let riders join a published ride according to its access mode (open, approval re
 - [ ] Links stop working when the ride starts or is cancelled.
 - [ ] Open and approval rides can also have an invite link; it then simply opens the ride.
 - [ ] Opening a link without the app is handled by the invite landing page (#61).
+- [ ] The admin can change the access mode of a published ride; it applies only to future joins. Pending requests stay pending when switching to open (the admin still decides them).
 
 **Participant list**
 - [ ] Participants and the admin see the list of participants: display name, "admin" label, and "needs to reconfirm" when applicable. Nothing else about them.
@@ -61,7 +62,7 @@ Let riders join a published ride according to its access mode (open, approval re
 **Reconfirmation**
 - [ ] When the admin moves the start by more than 1 hour, every participant except the admin becomes `NEEDS_RECONFIRMATION`.
 - [ ] The participant can confirm again (back to `CONFIRMED`) or leave.
-- [ ] Unconfirmed participants keep their place until the deadline in the open questions.
+- [ ] Unconfirmed participants keep their place until 2 hours before the new start time. Then their place is released, their status becomes `LEFT`, and they are notified.
 
 **Server-side rules**
 - [ ] Every rule above is enforced by the backend. The app's checks are for convenience only.
@@ -82,9 +83,12 @@ Let riders join a published ride according to its access mode (open, approval re
 - Invite landing page and universal links (#61)
 - Inviting riders by searching for them in the app, following riders, waitlists, no-show tracking (decided: no tracking in the MVP)
 
+## Defaults (2026-11-11, chosen by Claude because the BA asked to continue; the BA may change them)
+- Invitations: invite links only in the MVP. Inviting riders from past rides comes later.
+- Reconfirmation deadline: 2 hours before the new start time.
+- Changing the access mode after publishing: allowed, affects only future joins.
+- Join request message: optional, up to 300 characters.
+- Rejoining after removal: never for that ride.
+
 ## Open questions
-- **Invitations:** invite links only in the MVP (proposal), or also inviting riders from your past rides? *(BA)*
-- **Reconfirmation deadline:** when does an unconfirmed participant lose their place? Proposal: 2 hours before the new start time, after which their place is released and they are notified. *(BA)*
-- **Changing the access mode after publishing:** allowed, affecting only future joins (proposal)? *(BA)*
-- **Join request message:** keep the optional 300-character message (proposal), or no message? *(BA)*
-- **Rejoining after removal:** never for that ride (proposal), or allowed if the admin invites them again? *(BA)*
+None.
