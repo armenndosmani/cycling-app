@@ -81,7 +81,6 @@ export type FieldError =
   | 'invalid'
   | 'outOfRange'
   | 'tooSoon'
-  | 'inPast'
   | 'belowParticipants'
   /** The server rejected the value; the app has no more specific text */
   | 'server';
@@ -91,13 +90,17 @@ export type FieldErrors = Partial<Record<RideField, FieldError>>;
 /**
  * - `draft`: saving a draft; only the name is required, filled-in values must be valid.
  * - `publish`: publishing; every required field, start at least 30 minutes ahead.
- * - `published`: saving a published ride; every required field, a changed start in the future.
+ * - `published`: saving a published ride; every required field, a changed start at least 30
+ *   minutes ahead (like the backend).
  */
 export type ValidationMode = 'draft' | 'publish' | 'published';
 
 export type ValidationContext = {
   now: number;
-  /** Confirmed riders, including the admin; the limit cannot go below it */
+  /**
+   * Riders holding a place (`Ride.confirmedCount`): the admin and riders who must reconfirm
+   * included. The limit cannot go below it.
+   */
   confirmedCount?: number;
   /** For `published`: date or time differ from the saved ride */
   startChanged?: boolean;
@@ -133,7 +136,10 @@ export function rideFormFromRoute(route: SavedRoute, timeZone: string): RideForm
 
 /** The form for editing an existing ride. */
 export function rideFormFromRide(ride: Ride, fallbackTimeZone: string): RideForm {
-  const hasRoute = !ride.distanceIsPlanned && ride.distanceMeters !== null;
+  // `distanceIsPlanned` is false exactly when the ride has a route copy. Keep the copy in the
+  // form even without a distance: otherwise the target distance field would show, and sending
+  // a target distance without a routeId makes the backend remove the copy.
+  const hasRoute = !ride.distanceIsPlanned;
   return {
     name: ride.name,
     description: ride.description ?? '',
@@ -204,8 +210,8 @@ export function validateRideForm(
   if (!errors.startDate && !errors.startTime && complete) {
     const minutes = minutesUntilStart(form.startDate, form.startTime, form.timeZone, context.now);
     if (minutes !== null) {
-      if (mode === 'publish' && minutes < PUBLISH_LEAD_MINUTES) errors.startTime = 'tooSoon';
-      if (mode === 'published' && context.startChanged && minutes <= 0) errors.startTime = 'inPast';
+      const checkLead = mode === 'publish' || (mode === 'published' && context.startChanged);
+      if (checkLead && minutes < PUBLISH_LEAD_MINUTES) errors.startTime = 'tooSoon';
     }
   }
 

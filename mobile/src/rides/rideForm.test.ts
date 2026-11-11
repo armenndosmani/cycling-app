@@ -160,15 +160,23 @@ describe('validation', () => {
     expect(validateRideForm(lux, 'publish', { now: NOW }).startTime).toBe('tooSoon');
   });
 
-  it('lets a published ride be edited close to the start, but not moved into the past', () => {
+  it('lets a published ride be edited close to the start; a moved start needs 30 minutes', () => {
     const soon = { ...complete, startTime: '07:10' };
     expect(
       validateRideForm(soon, 'published', { now: NOW, startChanged: false }).startTime,
     ).toBeUndefined();
+    // Like the backend: a new start must be at least 30 minutes ahead
+    expect(validateRideForm(soon, 'published', { now: NOW, startChanged: true }).startTime).toBe(
+      'tooSoon',
+    );
     const past = { ...complete, startTime: '06:30' };
     expect(validateRideForm(past, 'published', { now: NOW, startChanged: true }).startTime).toBe(
-      'inPast',
+      'tooSoon',
     );
+    const later = { ...complete, startTime: '07:30' };
+    expect(
+      validateRideForm(later, 'published', { now: NOW, startChanged: true }).startTime,
+    ).toBeUndefined();
   });
 
   it('reports malformed dates and times', () => {
@@ -300,6 +308,40 @@ describe('forms from routes and rides', () => {
     expect(form.route).toEqual({ routeId: null, name: null, distanceMeters: 42_300 });
     expect(form.targetDistanceKm).toBe('');
     expect(form.timeZone).toBe(ZONE);
+  });
+
+  it('keeps a route copy without a distance, so editing never removes it', () => {
+    const ride = parseRide({
+      id: 'r1',
+      status: 'DRAFT',
+      name: 'Loop',
+      viewerRole: 'ADMIN',
+      distanceIsPlanned: false,
+      distanceMeters: null,
+    });
+    const form = rideFormFromRide(ride, ZONE);
+    expect(form.route).toEqual({ routeId: null, name: null, distanceMeters: null });
+    // A target distance is never required or sent while the ride has its copy
+    expect(validateRideForm(form, 'publish', { now: NOW }).targetDistanceKm).toBeUndefined();
+    const body = toRideBody({ ...form, targetDistanceKm: '60' });
+    expect(body).not.toHaveProperty('routeId');
+    expect(body.targetDistanceKm).toBeNull();
+  });
+
+  it('edits a ride with a route copy without touching the route: no routeId, no target', () => {
+    const ride = parseRide({
+      id: 'r1',
+      status: 'PUBLISHED',
+      name: 'Loop',
+      viewerRole: 'ADMIN',
+      distanceIsPlanned: false,
+      distanceMeters: 42_300,
+      targetDistanceKm: null,
+    });
+    const body = toRideBody({ ...rideFormFromRide(ride, ZONE), name: 'Renamed loop' });
+    // The backend keeps the copy only when neither routeId nor targetDistanceKm is sent
+    expect(JSON.parse(JSON.stringify(body))).not.toHaveProperty('routeId');
+    expect(body.targetDistanceKm).toBeNull();
   });
 
   it('notices a moved start', () => {

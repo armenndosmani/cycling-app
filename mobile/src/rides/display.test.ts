@@ -4,9 +4,11 @@ import type { RideStatus, ViewerRole } from '@/api/rides';
 import { haversineMeters } from '@/planner/geo';
 import {
   adminActions,
+  adminDisplay,
   circleRing,
   distanceDisplay,
   meetingDisplay,
+  placesDisplay,
   rideBadge,
   sortRides,
   visibleRoute,
@@ -48,8 +50,78 @@ describe('list order and labels', () => {
     expect(rideBadge({ status: 'CANCELLED', past: false })).toBe('cancelled');
     expect(rideBadge({ status: 'CANCELLED', past: true })).toBe('cancelled');
     expect(rideBadge({ status: 'PUBLISHED', past: true })).toBe('past');
-    expect(rideBadge({ status: 'DRAFT', past: true })).toBe('past');
+    // A draft whose date passed never took place: it stays a draft
+    expect(rideBadge({ status: 'DRAFT', past: true })).toBe('draft');
     expect(rideBadge({ status: 'PUBLISHED', past: false })).toBeNull();
+  });
+});
+
+describe('drafts without a start', () => {
+  it('keeps drafts without startsAt after dated upcoming rides, in their original order', () => {
+    const rides = [
+      row('draft-a', 'DRAFT', null),
+      row('dated', 'DRAFT', '2026-11-14T08:00:00Z'),
+      row('draft-b', 'DRAFT', null),
+      row('past', 'PUBLISHED', '2026-11-01T08:00:00Z', true),
+    ];
+    expect(sortRides(rides).map((ride) => ride.id)).toEqual([
+      'dated',
+      'draft-a',
+      'draft-b',
+      'past',
+    ]);
+  });
+
+  it('treats an unreadable startsAt like a missing one', () => {
+    const rides = [
+      row('broken', 'DRAFT', 'not a date'),
+      row('dated', 'DRAFT', '2026-11-14T08:00:00Z'),
+    ];
+    expect(sortRides(rides).map((ride) => ride.id)).toEqual(['dated', 'broken']);
+  });
+});
+
+describe('places', () => {
+  it('counts every rider holding a place, the admin included', () => {
+    expect(placesDisplay({ confirmedCount: 3, participantLimit: 10, placesLeft: 7 })).toEqual({
+      kind: 'left',
+      left: 7,
+      taken: 3,
+      limit: 10,
+    });
+  });
+
+  it('shows a full ride', () => {
+    expect(placesDisplay({ confirmedCount: 10, participantLimit: 10, placesLeft: 0 })).toEqual({
+      kind: 'full',
+      limit: 10,
+    });
+  });
+
+  it('shows no limit while placesLeft and the limit are null', () => {
+    expect(placesDisplay({ confirmedCount: 1, participantLimit: null, placesLeft: null })).toEqual({
+      kind: 'noLimit',
+      taken: 1,
+    });
+  });
+
+  it('works out places left for a summary, never below zero', () => {
+    expect(placesDisplay({ confirmedCount: 4, participantLimit: 6 })).toMatchObject({ left: 2 });
+    expect(placesDisplay({ confirmedCount: 7, participantLimit: 6 })).toEqual({
+      kind: 'full',
+      limit: 6,
+    });
+  });
+});
+
+describe('admin', () => {
+  it('names the admin, or says the account was deleted', () => {
+    expect(adminDisplay({ admin: { id: 'u1', displayName: 'Test Rider' } })).toEqual({
+      kind: 'name',
+      name: 'Test Rider',
+    });
+    expect(adminDisplay({ admin: null })).toEqual({ kind: 'deleted' });
+    expect(adminDisplay({ admin: { id: 'u1', displayName: ' ' } })).toEqual({ kind: 'unnamed' });
   });
 });
 
@@ -162,6 +234,15 @@ describe('admin actions', () => {
       publish: false,
       cancel: false,
       delete: false,
+    });
+  });
+
+  it('lets the admin edit and delete a draft whose date has passed, but not publish it', () => {
+    expect(adminActions(ride('ADMIN', 'DRAFT', true))).toEqual({
+      edit: true,
+      publish: false,
+      cancel: false,
+      delete: true,
     });
   });
 

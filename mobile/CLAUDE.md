@@ -49,6 +49,7 @@ Run lint and typecheck before declaring any task done.
 - API contract (create, edit, publish, cancel, delete, my rides, details) and problem types: `src/api/rides.ts`. Plain-language messages per problem type: `src/rides/rideErrors.ts`.
 - Dates and times are wall-clock values in the meeting point's IANA zone (`src/rides/dateTime.ts`, `Intl` only); the picker (`@react-native-community/datetimepicker`) only supplies the wall-clock fields.
 - Show the exact meeting point and route only through `meetingDisplay` / `visibleRoute` (`src/rides/display.ts`): riders who have not joined see the generalised circle, never a point.
+- `PUT /api/rides/{id}`: a `routeId` replaces the route copy; no `routeId` but a `targetDistanceKm` removes it; neither keeps it. Send `routeId` only when a route was attached in the form and `targetDistanceKm: null` while the ride has a copy (`toRideBody`).
 - The ride form (`src/rides/rideFormStore.ts`) is in memory only and reset when the form closes and on sign-out, like the planner draft.
 
 ## Text and accessibility

@@ -17,9 +17,15 @@ import { Button } from '@/components/Button';
 import { FormMessage } from '@/components/FormMessage';
 import { Badge } from '@/components/rides/Badge';
 import { colors, MIN_TOUCH_TARGET } from '@/constants/theme';
-import { distanceDisplay, rideBadge, sortRides } from '@/rides/display';
+import { distanceDisplay, placesDisplay, rideBadge, sortRides } from '@/rides/display';
 import { rideErrorMessage } from '@/rides/rideErrors';
-import { ageRatingLabel, ageRatingText, distanceText, rideWhenText } from '@/rides/rideText';
+import {
+  ageRatingLabel,
+  ageRatingText,
+  distanceText,
+  placesShortText,
+  rideWhenText,
+} from '@/rides/rideText';
 
 type ListState =
   | { kind: 'loading' }
@@ -112,9 +118,7 @@ function RideRow({ ride }: { ride: RideSummary }) {
   const details = [
     ride.discipline ? t(`profile.bicycleTypes.${ride.discipline}`) : null,
     distanceText(distanceDisplay(ride)),
-    ride.participantLimit !== null
-      ? t('rides.participants', { confirmed: ride.confirmedCount, limit: ride.participantLimit })
-      : null,
+    placesShortText(placesDisplay(ride)),
   ]
     .filter((part): part is string => part !== null)
     .join(t('rides.separator'));

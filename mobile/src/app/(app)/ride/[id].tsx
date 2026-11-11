@@ -20,13 +20,22 @@ import { positionAtFraction } from '@/planner/geo';
 import { withAdultConfirmation } from '@/rides/adultConfirmation';
 import {
   adminActions,
+  adminDisplay,
   distanceDisplay,
   meetingDisplay,
+  placesDisplay,
   rideBadge,
   visibleRoute,
 } from '@/rides/display';
-import { rideErrorMessage } from '@/rides/rideErrors';
-import { ageRatingLabel, ageRatingText, distanceText, rideWhenText } from '@/rides/rideText';
+import { isStaleRideFailure, rideErrorMessage } from '@/rides/rideErrors';
+import {
+  adminText,
+  ageRatingLabel,
+  ageRatingText,
+  distanceText,
+  placesText,
+  rideWhenText,
+} from '@/rides/rideText';
 
 type Loaded =
   { kind: 'loading' } | { kind: 'loaded'; ride: Ride } | { kind: 'failed'; error: unknown };
@@ -114,6 +123,8 @@ export default function RideScreen() {
             : rideErrorMessage(error),
         tone: 'error',
       });
+      // E.g. already published elsewhere or handed over: show what is possible now
+      if (isStaleRideFailure(error)) void load();
     } finally {
       setBusy(null);
     }
@@ -137,22 +148,13 @@ export default function RideScreen() {
             } catch (error) {
               setMessage({ text: rideErrorMessage(error), tone: 'error' });
               setBusy(null);
+              if (isStaleRideFailure(error)) void load();
             }
           },
         },
       ],
     );
   };
-
-  const places =
-    ride.participantLimit === null
-      ? null
-      : ride.placesLeft === 0
-        ? t('rides.detail.full', { limit: ride.participantLimit })
-        : t('rides.detail.placesValue', {
-            left: ride.placesLeft ?? ride.participantLimit - ride.confirmedCount,
-            limit: ride.participantLimit,
-          });
 
   const meetingText =
     meeting.kind === 'exact'
@@ -197,8 +199,11 @@ export default function RideScreen() {
           ) : null}
         </View>
       ) : null}
-      {ride.past && ride.status !== 'CANCELLED' ? (
+      {ride.past && ride.status === 'PUBLISHED' ? (
         <Text style={styles.note}>{t('rides.detail.pastNote')}</Text>
+      ) : null}
+      {ride.past && ride.status === 'DRAFT' ? (
+        <Text style={styles.note}>{t('rides.detail.pastDraftNote')}</Text>
       ) : null}
       {ride.needsReconfirmation ? (
         <Text style={styles.note}>{t('rides.detail.needsReconfirmation')}</Text>
@@ -225,14 +230,12 @@ export default function RideScreen() {
             }
           />
         ) : null}
-        <Fact label={t('rides.detail.places')} value={places} />
+        <Fact label={t('rides.detail.places')} value={placesText(placesDisplay(ride))} />
         <Fact
           label={t('rides.form.accessMode')}
           value={ride.accessMode ? t(`rides.access.${ride.accessMode}`) : null}
         />
-        {ride.admin?.displayName ? (
-          <Fact label={t('rides.detail.admin')} value={ride.admin.displayName} />
-        ) : null}
+        <Fact label={t('rides.detail.admin')} value={adminText(adminDisplay(ride))} />
         {ride.ageRating ? (
           <Fact label={t('rides.detail.ageRating')} value={ageRatingLabel(ride.ageRating)} />
         ) : null}

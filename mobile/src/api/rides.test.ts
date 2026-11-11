@@ -91,6 +91,29 @@ describe('parsing', () => {
     expect(ride.admin).toEqual({ id: 'u1', displayName: 'Test Rider' });
   });
 
+  it('parses a ride whose admin deleted their account and that has no limit yet', () => {
+    const ride = parseRide({
+      ...detail,
+      status: 'DRAFT',
+      admin: null,
+      participantLimit: null,
+      placesLeft: null,
+      startsAt: null,
+      startTime: null,
+    });
+    expect(ride.admin).toBeNull();
+    expect(ride.participantLimit).toBeNull();
+    expect(ride.placesLeft).toBeNull();
+    expect(ride.startsAt).toBeNull();
+    expect(ride.startDate).toBe('2026-11-15');
+  });
+
+  it('infers a planned distance only when distanceIsPlanned is missing and there is no route', () => {
+    const missing = { ...summary, distanceIsPlanned: undefined };
+    expect(parseRideSummary(missing).distanceIsPlanned).toBe(false);
+    expect(parseRideSummary({ ...missing, distanceMeters: null }).distanceIsPlanned).toBe(true);
+  });
+
   it('parses a draft with almost nothing set', () => {
     const ride = parseRide({ id: 'd1', status: 'DRAFT', name: 'Idea', viewerRole: 'ADMIN' });
     expect(ride).toMatchObject({
@@ -220,6 +243,15 @@ describe('errors', () => {
     );
     expect(rideFailure(problem(403, PROBLEM_TYPES.adultConfirmationRequired))).toBe(
       'adultConfirmationRequired',
+    );
+    expect(rideFailure(problem(403, 'urn:cycling:problem:not-ride-admin'))).toBe('notRideAdmin');
+    expect(rideFailure(problem(409, 'urn:cycling:problem:ride-not-editable'))).toBe('notEditable');
+    expect(rideFailure(problem(409, 'urn:cycling:problem:ride-not-draft'))).toBe('notDraft');
+    expect(rideFailure(problem(409, 'urn:cycling:problem:ride-not-published'))).toBe(
+      'notPublished',
+    );
+    expect(rideFailure(problem(409, 'urn:cycling:problem:handover-target-invalid'))).toBe(
+      'handoverTargetInvalid',
     );
   });
 

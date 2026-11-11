@@ -18,6 +18,11 @@ export const PROBLEM_TYPES = {
   limitBelowParticipants: 'urn:cycling:problem:limit-below-participants',
   ageRatingChangeBlocked: 'urn:cycling:problem:age-rating-change-blocked',
   adultConfirmationRequired: 'urn:cycling:problem:adult-confirmation-required',
+  notRideAdmin: 'urn:cycling:problem:not-ride-admin',
+  rideNotEditable: 'urn:cycling:problem:ride-not-editable',
+  rideNotDraft: 'urn:cycling:problem:ride-not-draft',
+  rideNotPublished: 'urn:cycling:problem:ride-not-published',
+  handoverTargetInvalid: 'urn:cycling:problem:handover-target-invalid',
 } as const;
 
 /** Returns the body as Problem Details if it looks like one, otherwise undefined. */

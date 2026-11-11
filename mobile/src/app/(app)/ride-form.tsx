@@ -35,7 +35,7 @@ import {
   timeZoneLabel,
   zonedToEpoch,
 } from '@/rides/dateTime';
-import { fieldErrorMessage, rideErrorMessage } from '@/rides/rideErrors';
+import { fieldErrorMessage, rideErrorMessage, rideSaveErrorMessage } from '@/rides/rideErrors';
 import {
   emptyRideForm,
   explainServerErrors,
@@ -196,7 +196,9 @@ export default function RideFormScreen() {
         setErrors({ participantLimit: 'belowParticipants' });
         setFormMessage(rideErrorMessage(error));
       } else {
-        setFormMessage(rideErrorMessage(error));
+        // Still set only when the failed request was the one that attached the route
+        const routeAttached = Boolean(rideFormStore.getState()?.form.route?.routeId);
+        setFormMessage(rideSaveErrorMessage(error, routeAttached));
       }
     }
   };
@@ -210,7 +212,9 @@ export default function RideFormScreen() {
           name: form.route.name,
           km: formatKilometres(form.route.distanceMeters ?? 0),
         })
-      : t('rides.form.routeCopy', { km: formatKilometres(form.route.distanceMeters ?? 0) })
+      : form.route.distanceMeters === null
+        ? t('rides.form.routeCopyNoDistance')
+        : t('rides.form.routeCopy', { km: formatKilometres(form.route.distanceMeters) })
     : t('rides.form.routeNone');
 
   return (

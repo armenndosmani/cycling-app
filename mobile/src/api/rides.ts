@@ -52,8 +52,12 @@ export const PUBLISH_LEAD_MINUTES = 30;
 
 /**
  * Body of `POST /api/rides` and `PUT /api/rides/{id}`. Only the name is required while the ride
- * is a draft. `routeId` is sent only when a saved route is attached (the server copies it);
- * leaving it out keeps the ride's current route copy.
+ * is a draft. On `PUT` the backend decides about the ride's route copy like this:
+ * - `routeId` set: copies that saved route (attaches or replaces the copy);
+ * - no `routeId` (absent and `null` are the same) but a `targetDistanceKm`: removes the copy;
+ * - neither: keeps the copy.
+ * So `routeId` is sent only when a saved route is attached, and `targetDistanceKm` must be null
+ * while the ride has a route copy that should stay.
  */
 export type RideBody = {
   name: string;
@@ -69,7 +73,7 @@ export type RideBody = {
   pace: Pace | null;
   participantLimit: number | null;
   accessMode: AccessMode | null;
-  routeId?: string | null;
+  routeId?: string;
   targetDistanceKm: number | null;
 };
 
@@ -93,6 +97,10 @@ export type RideSummary = {
   /** True when the distance is the admin's target distance, not a calculated route */
   distanceIsPlanned: boolean;
   targetDistanceKm: number | null;
+  /**
+   * Riders holding a place: the admin included, and riders who must reconfirm a moved start
+   * (they keep their place). The participant limit cannot go below it.
+   */
   confirmedCount: number;
   participantLimit: number | null;
   viewerRole: ViewerRole;
@@ -102,8 +110,10 @@ export type RideSummary = {
 export type Ride = RideSummary & {
   description: string | null;
   pace: Pace | null;
+  /** `participantLimit - confirmedCount`, never below 0; null while there is no limit */
   placesLeft: number | null;
   accessMode: AccessMode | null;
+  /** Null after the admin deleted their account */
   admin: { id: string; displayName: string } | null;
   ascendMeters: number | null;
   elevationProfile: ProfilePoint[];
@@ -185,18 +195,38 @@ export type RideFailure =
   | 'limitBelowParticipants'
   | 'ageRatingChangeBlocked'
   | 'adultConfirmationRequired'
+  /** 403: the rider can see the ride but is not (or no longer) its admin */
+  | 'notRideAdmin'
+  /** 409: cancelled, or published and already started */
+  | 'notEditable'
+  /** 409: publish or delete of a ride that is no longer a draft */
+  | 'notDraft'
+  /** 409: cancel of a ride that is still a draft */
+  | 'notPublished'
+  /** 409: hand-over to someone who is not another confirmed participant */
+  | 'handoverTargetInvalid'
   | 'validation'
   | 'notFound'
   | 'forbidden'
   | 'conflict'
   | 'other';
 
+/** Problem types of the ride endpoints, checked before the HTTP status. */
+const FAILURE_BY_TYPE: readonly [string, RideFailure][] = [
+  [PROBLEM_TYPES.limitBelowParticipants, 'limitBelowParticipants'],
+  [PROBLEM_TYPES.ageRatingChangeBlocked, 'ageRatingChangeBlocked'],
+  [PROBLEM_TYPES.adultConfirmationRequired, 'adultConfirmationRequired'],
+  [PROBLEM_TYPES.notRideAdmin, 'notRideAdmin'],
+  [PROBLEM_TYPES.rideNotEditable, 'notEditable'],
+  [PROBLEM_TYPES.rideNotDraft, 'notDraft'],
+  [PROBLEM_TYPES.rideNotPublished, 'notPublished'],
+  [PROBLEM_TYPES.handoverTargetInvalid, 'handoverTargetInvalid'],
+];
+
 export function rideFailure(error: unknown): RideFailure {
   if (!(error instanceof ApiError) || error.kind !== 'http') return 'other';
-  if (error.hasProblemType(PROBLEM_TYPES.limitBelowParticipants)) return 'limitBelowParticipants';
-  if (error.hasProblemType(PROBLEM_TYPES.ageRatingChangeBlocked)) return 'ageRatingChangeBlocked';
-  if (error.hasProblemType(PROBLEM_TYPES.adultConfirmationRequired)) {
-    return 'adultConfirmationRequired';
+  for (const [type, failure] of FAILURE_BY_TYPE) {
+    if (error.hasProblemType(type)) return failure;
   }
   if (error.status === 400 || error.status === 422) return 'validation';
   if (error.status === 404) return 'notFound';
@@ -291,7 +321,12 @@ export function parseRideSummary(value: unknown): RideSummary {
     discipline: optionalEnum(ride.discipline, DISCIPLINES, 'discipline'),
     ageRating: parseAgeRating(ride.ageRating),
     distanceMeters: optionalNumber(ride.distanceMeters, 'distanceMeters'),
-    distanceIsPlanned: ride.distanceIsPlanned === true,
+    // True exactly when the ride has no route copy; if it were missing, infer it from the
+    // distance, so a ride without a route is never taken for one with a route
+    distanceIsPlanned:
+      typeof ride.distanceIsPlanned === 'boolean'
+        ? ride.distanceIsPlanned
+        : ride.distanceMeters === null || ride.distanceMeters === undefined,
     targetDistanceKm: optionalNumber(ride.targetDistanceKm, 'targetDistanceKm'),
     confirmedCount: isFiniteNumber(ride.confirmedCount) ? ride.confirmedCount : 0,
     participantLimit: optionalNumber(ride.participantLimit, 'participantLimit'),

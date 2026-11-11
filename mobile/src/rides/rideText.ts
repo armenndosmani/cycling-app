@@ -2,7 +2,7 @@ import type { AgeRating, RideSummary } from '@/api/rides';
 import i18n from '@/i18n';
 import { formatKilometres } from '@/planner/format';
 import { formatRideDate, timeZoneLabel, zonedToEpoch } from '@/rides/dateTime';
-import type { DistanceDisplay } from '@/rides/display';
+import type { AdminDisplay, DistanceDisplay, PlacesDisplay } from '@/rides/display';
 
 type When = Pick<RideSummary, 'startDate' | 'startTime' | 'timeZone' | 'startsAt'>;
 
@@ -40,4 +40,43 @@ export function ageRatingLabel(rating: AgeRating): string {
   return rating === '16+'
     ? i18n.t('rides.ageRating.sixteenLabel')
     : i18n.t('rides.ageRating.eighteenLabel');
+}
+
+/** Places in a list row: how many are taken, the admin included. */
+export function placesShortText(display: PlacesDisplay): string {
+  switch (display.kind) {
+    case 'noLimit':
+      return i18n.t('rides.places.noLimit', { count: display.taken });
+    case 'full':
+      return i18n.t('rides.places.full', { limit: display.limit });
+    case 'left':
+      return i18n.t('rides.places.taken', { taken: display.taken, limit: display.limit });
+  }
+}
+
+/** Places on the ride details: taken (admin included) and left. */
+export function placesText(display: PlacesDisplay): string {
+  switch (display.kind) {
+    case 'noLimit':
+      return i18n.t('rides.places.noLimit', { count: display.taken });
+    case 'full':
+      return i18n.t('rides.places.full', { limit: display.limit });
+    case 'left':
+      return i18n.t('rides.places.takenAndLeft', {
+        taken: display.taken,
+        limit: display.limit,
+        left: display.left,
+      });
+  }
+}
+
+export function adminText(display: AdminDisplay): string {
+  switch (display.kind) {
+    case 'name':
+      return display.name;
+    case 'deleted':
+      return i18n.t('rides.detail.adminDeleted');
+    case 'unnamed':
+      return i18n.t('rides.detail.adminUnnamed');
+  }
 }

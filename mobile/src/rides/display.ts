@@ -12,8 +12,9 @@ export type RideBadge = 'draft' | 'cancelled' | 'past';
 
 export function rideBadge(ride: Pick<RideSummary, 'status' | 'past'>): RideBadge | null {
   if (ride.status === 'CANCELLED') return 'cancelled';
-  if (ride.past) return 'past';
+  // A draft whose date has passed never took place: it stays a draft (and can be edited)
   if (ride.status === 'DRAFT') return 'draft';
+  if (ride.past) return 'past';
   return null;
 }
 
@@ -74,6 +75,38 @@ export function distanceDisplay(
   const km =
     ride.targetDistanceKm ?? (ride.distanceMeters !== null ? ride.distanceMeters / 1000 : null);
   return km === null ? { kind: 'none' } : { kind: 'planned', km: Math.round(km) };
+}
+
+// --- Places and admin ---
+
+/**
+ * Places of a ride. `taken` is the backend's `confirmedCount`: everyone holding a place, the
+ * admin and riders who must reconfirm a moved start included.
+ */
+export type PlacesDisplay =
+  | { kind: 'noLimit'; taken: number }
+  | { kind: 'full'; limit: number }
+  | { kind: 'left'; left: number; taken: number; limit: number };
+
+export function placesDisplay(
+  ride: Pick<RideSummary, 'confirmedCount' | 'participantLimit'> & { placesLeft?: number | null },
+): PlacesDisplay {
+  const taken = ride.confirmedCount;
+  const limit = ride.participantLimit;
+  // No limit yet (a draft): the backend sends placesLeft null
+  if (limit === null) return { kind: 'noLimit', taken };
+  const left = Math.max(0, ride.placesLeft ?? limit - taken);
+  return left === 0 ? { kind: 'full', limit } : { kind: 'left', left, taken, limit };
+}
+
+/** The admin's name; null admin means the admin deleted their account. */
+export type AdminDisplay =
+  { kind: 'name'; name: string } | { kind: 'deleted' } | { kind: 'unnamed' };
+
+export function adminDisplay(ride: Pick<Ride, 'admin'>): AdminDisplay {
+  if (!ride.admin) return { kind: 'deleted' };
+  const name = ride.admin.displayName.trim();
+  return name ? { kind: 'name', name } : { kind: 'unnamed' };
 }
 
 // --- Meeting point and route on the map ---
@@ -147,15 +180,20 @@ export type AdminActions = {
   delete: boolean;
 };
 
-/** What the admin may do now; the backend enforces the same rules. */
+/**
+ * What the admin may do now; the backend enforces the same rules. Drafts can be edited
+ * whatever their date (a past draft needs a new start before it can be published); published
+ * rides only until they start; cancelled rides never.
+ */
 export function adminActions(ride: Pick<Ride, 'viewerRole' | 'status' | 'past'>): AdminActions {
   const admin = ride.viewerRole === 'ADMIN';
-  const open = admin && ride.status !== 'CANCELLED' && !ride.past;
   const status: RideStatus = ride.status;
+  const draft = admin && status === 'DRAFT';
+  const upcomingPublished = admin && status === 'PUBLISHED' && !ride.past;
   return {
-    edit: open,
-    publish: open && status === 'DRAFT',
-    cancel: open && status === 'PUBLISHED',
-    delete: admin && status === 'DRAFT',
+    edit: draft || upcomingPublished,
+    publish: draft && !ride.past,
+    cancel: upcomingPublished,
+    delete: draft,
   };
 }
