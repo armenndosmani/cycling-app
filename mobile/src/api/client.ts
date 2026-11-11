@@ -14,6 +14,8 @@ export type RequestOptions = {
   body?: unknown;
   headers?: Record<string, string>;
   timeoutMs?: number;
+  /** Cancels the request; it then fails with an ApiError of kind `aborted`. */
+  signal?: AbortSignal;
 };
 
 /**
@@ -25,9 +27,14 @@ export type RequestOptions = {
  * need an access token.
  */
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, headers = {}, timeoutMs = DEFAULT_TIMEOUT_MS } = options;
+  const { method = 'GET', body, headers = {}, timeoutMs = DEFAULT_TIMEOUT_MS, signal } = options;
+  if (signal?.aborted) throw new ApiError('aborted');
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const onCallerAbort = () => controller.abort();
+  signal?.addEventListener('abort', onCallerAbort);
+  const failureKind = () =>
+    signal?.aborted ? 'aborted' : controller.signal.aborted ? 'timeout' : 'network';
 
   let response: Response;
   try {
@@ -43,7 +50,8 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     });
   } catch {
     clearTimeout(timer);
-    throw new ApiError(controller.signal.aborted ? 'timeout' : 'network');
+    signal?.removeEventListener('abort', onCallerAbort);
+    throw new ApiError(failureKind());
   }
 
   try {
@@ -60,9 +68,10 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     return parsed as T;
   } catch (error) {
     if (error instanceof ApiError) throw error;
-    throw new ApiError(controller.signal.aborted ? 'timeout' : 'network');
+    throw new ApiError(failureKind());
   } finally {
     clearTimeout(timer);
+    signal?.removeEventListener('abort', onCallerAbort);
   }
 }
 

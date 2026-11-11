@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -77,6 +78,15 @@ export default function Index() {
             />
           </>
         )}
+      </View>
+
+      <View style={styles.section}>
+        <Button label={t('home.planRoute')} onPress={() => router.push('/planner')} />
+        <Button
+          variant="secondary"
+          label={t('home.myRoutes')}
+          onPress={() => router.push('/routes')}
+        />
       </View>
 
       <View style={styles.section}>

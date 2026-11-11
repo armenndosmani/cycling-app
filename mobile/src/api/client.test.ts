@@ -93,6 +93,24 @@ describe('request', () => {
     expect(error.problem).toBeUndefined();
   });
 
+  it('reports a request cancelled by the caller as aborted', async () => {
+    fetchMock.mockImplementation(
+      (_url, init) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(new Error('AbortError')));
+        }),
+    );
+    const controller = new AbortController();
+    const pending = caught(request('/api/places?q=ab', { signal: controller.signal }));
+    controller.abort();
+    expect((await pending).kind).toBe('aborted');
+
+    // Already cancelled: no request at all
+    fetchMock.mockClear();
+    expect((await caught(request('/api/me', { signal: controller.signal }))).kind).toBe('aborted');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('reports network failures', async () => {
     fetchMock.mockRejectedValue(new TypeError('Network request failed'));
 

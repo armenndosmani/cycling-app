@@ -17,7 +17,11 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "blockedPermissions": [
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE_LOCATION"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -34,6 +38,21 @@
         "expo-secure-store",
         {
           "faceIDPermission": false
+        }
+      ],
+      "@maplibre/maplibre-react-native",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Your location is used only when you tap \"Use my location\", to centre the map once. It is never tracked in the background.",
+          "locationAlwaysAndWhenInUsePermission": false,
+          "locationAlwaysPermission": false,
+          "locationFullAccuracyPermission": false,
+          "motionUsagePermission": false,
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false,
+          "isAndroidForegroundServiceEnabled": false,
+          "isAndroidMotionActivityEnabled": false
         }
       ]
     ],

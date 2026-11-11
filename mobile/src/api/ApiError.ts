@@ -1,7 +1,10 @@
 import type { ProblemDetails } from '@/api/problem';
 
-/** What went wrong, so screens can pick a translated message (see `errorMessage`). */
-export type ApiErrorKind = 'network' | 'timeout' | 'http';
+/**
+ * What went wrong, so screens can pick a translated message (see `errorMessage`).
+ * `aborted` means the caller cancelled the request (e.g. a newer one replaced it).
+ */
+export type ApiErrorKind = 'network' | 'timeout' | 'http' | 'aborted';
 
 export class ApiError extends Error {
   constructor(

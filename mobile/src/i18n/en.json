@@ -77,7 +77,142 @@
     "signedInAs": "Signed in as {{name}}",
     "profileUnavailable": "Your profile could not be loaded.",
     "reloadProfile": "Load profile again",
+    "planRoute": "Plan a route",
+    "myRoutes": "My routes",
     "signOut": "Sign out"
+  },
+  "planner": {
+    "title": "Plan a route",
+    "mapLabel": "Map. Tap to set the start, the destination or a stop.",
+    "hint": {
+      "start": "Tap the map or search for a place to set the start.",
+      "destination": "Now set the destination. For a loop, use the start as destination.",
+      "editing": "Tap the map to add a stop. Drag a point to move it."
+    },
+    "attributionHint": "Opens the OpenStreetMap copyright page in your browser",
+    "useMyLocation": "Use my location",
+    "useMyLocationHint": "Centres the map once on where you are. Your location is not saved.",
+    "locationDenied": "Location permission was not given. You can still tap the map or search.",
+    "locationUnavailable": "Your location could not be found right now.",
+    "waypointLimit": "A route can have at most {{max}} stops. Remove one to add another.",
+    "discipline": {
+      "label": "Discipline"
+    },
+    "search": {
+      "label": "Search for a place",
+      "placeholder": "Town, street or place",
+      "hint": "At least 2 characters",
+      "searching": "Searching",
+      "noResults": "No places found.",
+      "unavailable": "Place search is not available right now. Try again later.",
+      "resultHint": "Adds this place to the route"
+    },
+    "points": {
+      "heading": "Points",
+      "start": "Start",
+      "destination": "Destination",
+      "waypoint": "Stop {{number}}",
+      "onMap": "Point on the map",
+      "moveUp": "Up",
+      "moveDown": "Down",
+      "remove": "Remove",
+      "moveUpLabel": "Move {{point}} earlier",
+      "moveDownLabel": "Move {{point}} later",
+      "removeLabel": "Remove {{point}}",
+      "markerHint": "Drag to move this point"
+    },
+    "actions": {
+      "undo": "Undo",
+      "undoHint": "Undoes the last change to the points",
+      "loop": "Back to start",
+      "loopHint": "Uses the start as destination, for a loop",
+      "newRoute": "New route",
+      "save": "Save",
+      "saveHint": "Saves the route as a private draft",
+      "myRoutes": "My routes"
+    },
+    "status": {
+      "calculating": "Calculating route",
+      "notFound": "No route found for this discipline. Try moving a point or choosing another discipline. Your points are kept.",
+      "unavailable": "The route service is not available right now. Your points are kept.",
+      "retry": "Try again",
+      "unsaved": "Unsaved changes",
+      "editing": "Editing \"{{name}}\""
+    },
+    "stats": {
+      "distance": "Distance",
+      "distanceValue": "{{km}} km",
+      "distanceLabel": "Distance {{km}} kilometres",
+      "ascend": "Elevation gain",
+      "ascendValue": "{{meters}} m",
+      "ascendLabel": "Elevation gain {{meters}} metres",
+      "elevationUnavailable": "Elevation not available"
+    },
+    "profile": {
+      "heading": "Elevation profile",
+      "label": "Elevation profile from {{min}} to {{max}} metres. Swipe up or down to move the marker along the route.",
+      "position": "{{km}} km, {{meters}} m",
+      "range": "{{min}} to {{max}} m",
+      "touchHint": "Touch the profile to mark the point on the map."
+    },
+    "surfaces": {
+      "heading": "Surfaces",
+      "item": "{{surface}}: {{percent}} %",
+      "asphalt": "Asphalt",
+      "concrete": "Concrete",
+      "paving_stones": "Paving stones",
+      "cobblestone": "Cobblestone",
+      "compacted": "Compacted",
+      "fine_gravel": "Fine gravel",
+      "gravel": "Gravel",
+      "unpaved": "Unpaved",
+      "ground": "Ground",
+      "dirt": "Dirt",
+      "grass": "Grass",
+      "sand": "Sand",
+      "wood": "Wood",
+      "other": "Other",
+      "unknown": "Unknown"
+    },
+    "discard": {
+      "title": "Discard unsaved changes?",
+      "message": "The route you are planning has changes that are not saved.",
+      "confirm": "Discard",
+      "cancel": "Keep editing"
+    }
+  },
+  "routeDetails": {
+    "saveTitle": "Save route",
+    "renameTitle": "Rename route",
+    "intro": "Saved routes are private drafts. Only you can see them.",
+    "nameLabel": "Name",
+    "nameHint": "1 to 80 characters",
+    "nameRequired": "Enter a name.",
+    "nameTooLong": "Use at most 80 characters.",
+    "noteLabel": "Note (optional)",
+    "noteHint": "Up to 1,000 characters",
+    "noteTooLong": "Use at most 1,000 characters.",
+    "save": "Save",
+    "notReady": "Set a start and a destination and wait for the route before saving.",
+    "loadFailed": "The route could not be loaded."
+  },
+  "routes": {
+    "title": "My routes",
+    "empty": "You have no saved routes yet.",
+    "planFirst": "Plan a route",
+    "summary": "{{discipline}} · {{distance}} · {{ascend}}",
+    "rowLabel": "{{name}}, {{summary}}",
+    "openHint": "Opens the route in the planner",
+    "rename": "Rename",
+    "renameLabel": "Rename {{name}}",
+    "delete": "Delete",
+    "deleteLabel": "Delete {{name}}",
+    "deleteTitle": "Delete route?",
+    "deleteMessage": "\"{{name}}\" will be removed for good.",
+    "deleteConfirm": "Delete",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "opening": "Opening route"
   },
   "status": {
     "title": "Backend status",

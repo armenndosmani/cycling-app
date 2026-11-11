@@ -1,4 +1,4 @@
-import Constants from 'expo-constants';
+import { getDevHost } from '@/config/devHost';
 
 const BACKEND_PORT = 8080;
 
@@ -16,12 +16,5 @@ export function getApiBaseUrl(): string {
   if (fromEnv) {
     return fromEnv.replace(/\/+$/, '');
   }
-
-  // e.g. "192.168.1.20:8081"; only present while running through the Expo CLI
-  const devHost = Constants.expoConfig?.hostUri?.split(':')[0];
-  if (devHost) {
-    return `http://${devHost}:${BACKEND_PORT}`;
-  }
-
-  return `http://localhost:${BACKEND_PORT}`;
+  return `http://${getDevHost() ?? 'localhost'}:${BACKEND_PORT}`;
 }

@@ -13,6 +13,8 @@ export type ProblemDetails = {
 export const PROBLEM_TYPES = {
   registrationRequired: 'urn:cycling:problem:registration-required',
   invalidCode: 'urn:cycling:problem:invalid-code',
+  routeNotFound: 'urn:cycling:problem:route-not-found',
+  routingUnavailable: 'urn:cycling:problem:routing-unavailable',
 } as const;
 
 /** Returns the body as Problem Details if it looks like one, otherwise undefined. */
