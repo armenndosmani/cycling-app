@@ -17,7 +17,7 @@ Legend: **Who:** L = lawyer, T = team (developer + BA), D = developer.
 - [ ] Deleting accounts of riders found to be under 16 (consent was never valid)
 - [ ] Privacy notice and lawful basis for every kind of data, including showing participants to each other
 - [ ] Data processing agreements: Hetzner, Mailjet, Apple (APNs), Google (FCM)
-- [ ] Retention periods: backups 30 days, past and cancelled rides 12 months then anonymised, ride chat 12 months, logs
+- [ ] Retention periods: backups 30 days, past and cancelled rides 12 months then anonymised (implemented as deleting the ride, its participants and route copy), ride chat 12 months, logs
 - [ ] EU Digital Services Act: notice-and-action, statement of reasons, contact point; which duties apply at our size
 - [ ] Accessibility: confirm whether the European Accessibility Act applies to us
 - [ ] Inactive accounts: delete accounts unused for a long time (e.g. 2 years)?
@@ -44,5 +44,6 @@ Legend: **Who:** L = lawyer, T = team (developer + BA), D = developer.
 - [ ] Admin app or at least the moderation endpoints in place (issue #30)
 - [ ] Production secrets set: `APP_AUTH_JWT_SECRET` (random, at least 32 bytes), Mailjet SMTP credentials, `APP_MAIL_FROM` on our domain (SPF/DKIM set up)
 - [ ] Production geo data for the launch region: OSM extract, Protomaps tiles, Photon data, elevation; GraphHopper and Photon memory sized for it (dev: `backend/geo/README.md`)
+- [ ] City boundaries for the launch region loaded into `city_boundaries` (`backend/geo/load-city-boundaries.sh` shows how for dev); the team checks the list of cities it produces, since every ride outside them is 18+
 - [ ] The production database has the PostGIS extension, or the app's database role may create it (migration `V2__postgis.sql`)
 - [ ] Reverse proxy passes the client IP (`SERVER_FORWARD_HEADERS_STRATEGY`), so sign-in rate limits work per rider; rate limits are in memory and assume a single backend instance

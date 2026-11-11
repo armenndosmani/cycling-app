@@ -79,12 +79,11 @@ public class AccountService {
 			return false;
 		}
 		codes.deleteAll(user.getEmail());
-		// Each feature deletes its own data (saved routes so far). Sessions and refresh
-		// tokens are deleted by the database (on delete cascade). Still to come with
-		// rides:
-		// cancel upcoming rides the rider administers, remove their participation and
-		// show
-		// their chat messages as "Deleted rider" (docs/specs/accounts.md).
+		// Each feature deletes its own data: saved routes; rides (upcoming rides the
+		// rider administers are cancelled, drafts deleted, participation removed).
+		// Sessions and refresh tokens are deleted by the database (on delete cascade).
+		// Still to come with chat: show their messages as "Deleted rider"
+		// (docs/specs/accounts.md).
 		deletionHooks.forEach(hook -> hook.deleteAccountData(userId));
 		users.delete(user);
 		return true;

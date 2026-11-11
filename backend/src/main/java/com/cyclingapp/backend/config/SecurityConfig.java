@@ -57,6 +57,10 @@ public class SecurityConfig {
 			// routes
 			// are further limited to their owner in the queries
 			auth.requestMatchers("/api/routing/**", "/api/places", "/api/routes", "/api/routes/**").authenticated();
+			// Rides (docs/specs/ride-event-creation.md): signed-in riders only; who may
+			// see or
+			// change a ride is checked per ride in RideService
+			auth.requestMatchers("/api/rides", "/api/rides/**").authenticated();
 			auth.anyRequest().authenticated();
 		})
 			// Access tokens: "Authorization: Bearer <jwt>"

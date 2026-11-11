@@ -17,6 +17,7 @@ and bzip2):
 ./geo/download-dev-data.sh          # about 250 MB, under a minute on a fast connection
 docker compose --profile geo up -d  # first start: GraphHopper imports the extract (~30 s)
 docker compose --profile geo down   # stop
+./geo/load-city-boundaries.sh       # city boundaries into the dev database (see below)
 ```
 
 Data goes to `backend/geo/data/` (git-ignored). Re-running the script skips what exists;
@@ -82,6 +83,7 @@ decided yet (see `docs/launch-checklist.md`); to switch, change the values at th
 | Fonts and sprites | `protomaps/basemaps-assets` at a pinned commit | ~12 MB |
 | GraphHopper graph | built on first start (4 CH profiles with elevation) | ~54 MB |
 | Elevation | SRTM tiles downloaded by GraphHopper during the import | ~5 MB |
+| City boundaries | cut from the OSM extract with osmium (below) | ~50 KB |
 
 Memory while running: GraphHopper ~1.3 GB (heap limit 2 GB), Photon ~0.4 GB, Martin and
 nginx under 50 MB. Plan for about 2 GB free RAM and 400 MB disk.
@@ -101,6 +103,36 @@ All four use contraction hierarchies (fast, no per-request custom models). The `
 encoded value is stored, so routes can return the `surface` path detail for the surface
 breakdown.
 
+## City boundaries (ride age rating)
+
+A ride is 16+ when its whole route lies inside one city boundary, otherwise 18+
+(`docs/specs/ride-event-creation.md`). The backend checks this against the table
+`city_boundaries` (Flyway creates it, empty). In development it is filled from the OSM
+extract:
+
+1. `download-dev-data.sh` builds a small osmium-tool image (`boundaries/Dockerfile`,
+   Debian trixie at a dated tag, osmium-tool 1.18) and runs `boundaries/extract-cities.sh`,
+   which writes `data/boundaries/cities.geojsonseq`.
+2. `./geo/load-city-boundaries.sh` (from `backend/`) loads that file into the dev
+   database through the Compose Postgres container, replacing what was there. The
+   Postgres container must be running and the backend must have started once (so the
+   table exists).
+
+A **city** is an OSM administrative boundary relation (`boundary=administrative`) that is
+tagged `place=city` itself, or whose `label` member node is tagged `place=city`, or whose
+`admin_centre` member node is tagged `place=city` and has the same `name` as the relation.
+The last rule is needed for Luxembourg City (its node is only the `admin_centre` of the
+commune, the canton and the country); the name check keeps the canton and the country
+out. In the Luxembourg extract this gives exactly one city: Luxembourg (relation 407489,
+about 52 km²). Esch-sur-Alzette and other towns are `place=town`, so rides there are 18+.
+
+Limits: it depends on how mappers tag places (`place=city` roughly means 100,000+
+inhabitants, but practice varies by country); a city boundary is the whole municipality,
+including its forests and fields at the edge; a route through two neighbouring cities is
+18+ because it must stay inside one boundary. Boundaries are not reloaded automatically:
+ratings of existing rides are only recalculated when their route changes. Tests use a
+made-up polygon instead.
+
 ## Licences and attribution
 
 - **OpenStreetMap data** (tiles, routing, search): ODbL. The map must show
@@ -115,7 +147,7 @@ breakdown.
   tiles from the srtm.kurviger.de mirror during the import only. CGIAR SRTM was not used
   because its licence restricts commercial use.
 - **Software**: GraphHopper and Photon Apache 2.0, Martin MIT/Apache 2.0, nginx BSD-2,
-  go-pmtiles BSD-3.
+  go-pmtiles BSD-3, osmium-tool GPL-3 (a build tool only, never shipped or linked).
 - **Photon dumps**: built by GraphHopper from OSM data (ODbL).
 
 Open legal questions are tracked in `docs/launch-checklist.md`.

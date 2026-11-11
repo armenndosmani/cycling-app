@@ -6,10 +6,13 @@
 #   data/tiles/basemap.pmtiles    Protomaps basemap cut to the region, served by Martin
 #   data/assets/fonts, sprites    map fonts (glyphs) and the dark sprite sheet, so the app
 #                                 loads nothing from third parties at runtime
+#   data/boundaries/cities.geojsonseq
+#                                 city boundaries cut from the OSM extract, for the rides'
+#                                 age rating; load them with ./geo/load-city-boundaries.sh
 #
 # Works in Git Bash on Windows, and on Linux and macOS. Needs curl, tar with bzip2, and
-# Docker (pmtiles runs in a container). Re-running skips files that already exist; pass
-# --force to download everything again.
+# Docker (pmtiles and osmium run in containers). Re-running skips files that already
+# exist; pass --force to download everything again.
 #
 # The region is Luxembourg: small (about 46 MB of OSM data), with a real city boundary
 # (Luxembourg City) for the "urban ride" check, hills, and gravel and MTB tracks. To use
@@ -32,6 +35,8 @@ ASSETS_COMMIT=028c18f713baecad011301ff7a69acc39bcc2ae7
 ASSETS_URL=https://github.com/protomaps/basemaps-assets/archive/$ASSETS_COMMIT.tar.gz
 ASSETS_FONTS=("Noto Sans Regular" "Noto Sans Medium" "Noto Sans Italic")
 ASSETS_SPRITES=dark
+# osmium-tool image built from boundaries/Dockerfile, for the city boundaries
+OSMIUM_IMAGE=cycling-dev/osmium:1.18
 
 FORCE=false
 if [ "${1:-}" = "--force" ]; then
@@ -59,8 +64,8 @@ if needed "$DATA/osm/region.osm.pbf"; then
 	curl -fL --progress-bar --retry 3 -o "$DATA/osm/region.osm.pbf.part" "$OSM_URL"
 	mv "$DATA/osm/region.osm.pbf.part" "$DATA/osm/region.osm.pbf"
 	echo "  done in $(($(seconds) - start)) s"
-	# A new extract needs a new graph
-	rm -rf "$DATA/graphhopper"
+	# A new extract needs a new graph and new city boundaries
+	rm -rf "$DATA/graphhopper" "$DATA/boundaries/cities.geojsonseq"
 	mkdir -p "$DATA/graphhopper"
 else
 	echo "OpenStreetMap extract exists, skipping"
@@ -124,9 +129,29 @@ else
 	echo "Map fonts and sprites exist, skipping"
 fi
 
+# 5. City boundaries for the rides' age rating, cut from the OSM extract with osmium
+# (boundaries/extract-cities.sh has the definition of "city"). Loaded into the database
+# separately with load-city-boundaries.sh, because the database may not be running yet.
+if needed "$DATA/boundaries/cities.geojsonseq"; then
+	echo "Extracting city boundaries..."
+	start=$(seconds)
+	mkdir -p "$DATA/boundaries"
+	docker build -q -t "$OSMIUM_IMAGE" "$SCRIPT_DIR/boundaries" >/dev/null
+	data_dir="$DATA"
+	if pwd -W >/dev/null 2>&1; then
+		data_dir="$(cd "$data_dir" && pwd -W)"
+	fi
+	MSYS_NO_PATHCONV=1 docker run --rm -v "$data_dir:/data" "$OSMIUM_IMAGE"
+	echo "  done in $(($(seconds) - start)) s"
+else
+	echo "City boundaries exist, skipping"
+fi
+
 echo
 echo "Data in $DATA:"
-du -sh "$DATA/osm" "$DATA/photon" "$DATA/tiles" "$DATA/assets" 2>/dev/null || true
+du -sh "$DATA/osm" "$DATA/photon" "$DATA/tiles" "$DATA/assets" "$DATA/boundaries" 2>/dev/null || true
 echo
+echo "Load the city boundaries into the dev database (Postgres running, backend started once):"
+echo "  ./geo/load-city-boundaries.sh"
 echo "Start the geo services (from backend/): docker compose --profile geo up -d"
 echo "The first GraphHopper start imports the extract and downloads elevation tiles (a few minutes)."
