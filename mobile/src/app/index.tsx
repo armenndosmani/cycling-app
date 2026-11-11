@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { ApiError } from "@/api/client";
-import { getHealth, type HealthStatus } from "@/api/health";
-import { getApiBaseUrl } from "@/config/api";
-import { colors } from "@/constants/theme";
+import { ApiError } from '@/api/client';
+import { getHealth, type HealthStatus } from '@/api/health';
+import { getApiBaseUrl } from '@/config/api';
+import { colors } from '@/constants/theme';
 
 type BackendState =
-  | { kind: "checking" }
-  | { kind: "reachable"; status: HealthStatus }
-  | { kind: "unreachable"; reason: string };
+  | { kind: 'checking' }
+  | { kind: 'reachable'; status: HealthStatus }
+  | { kind: 'unreachable'; reason: string };
 
 export default function Index() {
-  const [backend, setBackend] = useState<BackendState>({ kind: "checking" });
+  const [backend, setBackend] = useState<BackendState>({ kind: 'checking' });
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     getHealth()
       .then((health) => {
-        if (!cancelled) setBackend({ kind: "reachable", status: health.status });
+        if (!cancelled) setBackend({ kind: 'reachable', status: health.status });
       })
       .catch((error: unknown) => {
-        const reason = error instanceof ApiError ? error.message : "Unexpected error";
-        if (!cancelled) setBackend({ kind: "unreachable", reason });
+        const reason = error instanceof ApiError ? error.message : 'Unexpected error';
+        if (!cancelled) setBackend({ kind: 'unreachable', reason });
       });
     return () => {
       cancelled = true;
@@ -31,26 +31,26 @@ export default function Index() {
   }, [attempt]);
 
   const check = () => {
-    setBackend({ kind: "checking" });
+    setBackend({ kind: 'checking' });
     setAttempt((n) => n + 1);
   };
 
-  const isUp = backend.kind === "reachable" && backend.status === "UP";
+  const isUp = backend.kind === 'reachable' && backend.status === 'UP';
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Backend status</Text>
 
       <View style={styles.card}>
-        {backend.kind === "checking" ? (
+        {backend.kind === 'checking' ? (
           <ActivityIndicator color={colors.accent} />
         ) : (
           <>
             <View style={[styles.dot, { backgroundColor: isUp ? colors.accent : colors.danger }]} />
             <Text style={styles.status}>
-              {backend.kind === "reachable" ? backend.status : "Unreachable"}
+              {backend.kind === 'reachable' ? backend.status : 'Unreachable'}
             </Text>
-            {backend.kind === "unreachable" && <Text style={styles.muted}>{backend.reason}</Text>}
+            {backend.kind === 'unreachable' && <Text style={styles.muted}>{backend.reason}</Text>}
           </>
         )}
       </View>
@@ -60,7 +60,7 @@ export default function Index() {
       <Pressable
         accessibilityRole="button"
         onPress={check}
-        disabled={backend.kind === "checking"}
+        disabled={backend.kind === 'checking'}
         style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
       >
         <Text style={styles.buttonText}>Check again</Text>
@@ -72,8 +72,8 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: 16,
     padding: 16,
     backgroundColor: colors.background,
@@ -81,10 +81,10 @@ const styles = StyleSheet.create({
   title: {
     color: colors.text,
     fontSize: 22,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   card: {
-    alignItems: "center",
+    alignItems: 'center',
     gap: 8,
     minWidth: 220,
     padding: 20,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   status: {
     color: colors.text,
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   muted: {
     color: colors.textMuted,
@@ -116,6 +116,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.background,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

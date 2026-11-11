@@ -29,27 +29,27 @@ Goal: keep the always-loaded context small and load everything else only when ne
 | Decisions log | `docs/decisions.md` | On demand | Done |
 | Specs | `docs/specs/` | On demand, one per feature | Template done |
 | Path-scoped rules | `.claude/rules/*.md` with `paths:` frontmatter | Only when matching files are touched | `database.md` done; add more per code area as it appears |
-| Skills | `.claude/skills/<name>/SKILL.md` | Only when invoked | `write-spec`, `privacy-review` done; `architecture`, `ship` planned |
+| Skills | `.claude/skills/<name>/SKILL.md` | Only when invoked | `write-spec`, `privacy-review`, `ship` done; `architecture` planned |
 | Subagents | `.claude/agents/<name>.md` | Separate context, only summary returns | `implementer`, `test-runner`, `reviewer` done |
 | Hooks | `.claude/settings.json` | Guard hook: blocks .env access, push to main, gh pr merge | Guard done; format/lint and output-filter hooks planned |
 
-Planned skills:
-- `write-spec`: turn a Discord message into `docs/specs/<feature>.md` using the template.
-- `privacy-review`: GDPR and privacy checklist based on section 4 of `docs/product-context.md`; run before merging anything that touches personal data.
-- `architecture`: folder layout and conventions; write once the project structure exists.
-- `ship`: the build, test, preview and e2e loop in section 5.
+Skills:
+- `write-spec` (done): turn a Discord message into `docs/specs/<feature>.md` using the template.
+- `privacy-review` (done): GDPR and privacy checklist based on section 4 of `docs/product-context.md`; run before merging anything that touches personal data.
+- `ship` (done): the build, test and PR loop in section 5.
+- `architecture` (planned): folder layout and conventions; write once the first features set the patterns.
 
-Planned subagents:
+Subagents (done):
 - `implementer` (Sonnet): builds a feature from a spec on a branch, returns a short summary of changes.
 - `test-runner` (Haiku): runs tests, returns only failures.
-- `reviewer`: reviews a branch for security and privacy issues before merge.
+- `reviewer` (Opus): reviews a branch for security and privacy issues before merge.
 
-Planned path-scoped rules: `maps-routing.md` (map and routing code), `database.md` (migrations and access policies), `mobile.md` (mobile app folder).
+Path-scoped rules: `database.md` (done). Planned: `maps-routing.md` once map and routing code exists. Mobile rules live in `mobile/CLAUDE.md`.
 
-Planned hooks:
-- Filter test and build output down to failures and errors.
-- Format and lint after each file edit.
-- Block reading `.env*` files and pushing to `main`.
+Hooks:
+- Done: guard hook blocks `.env*` access (except `.env.example`), pushing to `main`, and `gh pr merge`.
+- Planned: filter test and build output down to failures and errors.
+- Planned: format and lint after each file edit (needs a formatter decision: e.g. Prettier for mobile, Spotless for backend).
 
 Model use: Opus with plan mode for large designs (e.g. route planner architecture), Sonnet for implementation, Haiku for the test-runner.
 
@@ -59,7 +59,7 @@ Model use: Opus with plan mode for large designs (e.g. route planner architectur
 | --- | --- | --- |
 | Discord channel plugin | Use | Official plugin, allowlist only |
 | TypeScript code intelligence plugin | Use | From the official marketplace, once the TS project exists |
-| Context7 MCP | Use | Current docs for Expo, MapLibre, Supabase and other fast-moving libraries |
+| Context7 MCP | Use | Current docs for Expo, MapLibre, Spring and other fast-moving libraries |
 | `gh` CLI | Use | Preferred over the GitHub MCP server (less context) |
 | Playwright tests | Planned | E2E test suite in the repo, run in CI |
 | Playwright MCP | Later | For exploratory checks once a web UI exists |
@@ -68,11 +68,15 @@ Model use: Opus with plan mode for large designs (e.g. route planner architectur
 
 Before installing any new plugin or MCP server: confirm it solves a real problem, prefer official or widely used ones, and check `/usage` afterwards.
 
-## 5. Build, test, deploy pipeline (Planned)
+## 5. Build, test, deploy pipeline
+
+**Done:** `.github/workflows/ci.yml` runs on every PR, on pushes to `main` and weekly. It detects which projects changed, runs backend tests (`./mvnw verify`), mobile typecheck and lint, and a vulnerability gate (`npm audit` + OSV check of Maven dependencies) that fails on any finding. `ci-ok` is the single required check on `main`. Dependabot opens weekly update PRs.
+
+**Planned:** preview environments and Playwright e2e tests (steps 4 and 5 below), once hosting is decided.
 
 GitHub Actions builds, deploys and tests. Claude drives the loop and fixes failures. Deploy credentials live only in GitHub Actions secrets, never on the developer's PC.
 
-The ship loop:
+The ship loop (target):
 1. Run a quick local build and unit tests through the test-runner subagent.
 2. Push the branch and open a pull request with `gh pr create`.
 3. CI builds the app and runs backend tests.
@@ -95,19 +99,19 @@ Requirements:
 
 - Normal permission prompts by default. Do not use `--dangerously-skip-permissions` on the developer's main PC.
 - No production keys or real user data on the machine running Claude Code.
-- `main` is protected on GitHub: changes only through reviewed pull requests.
+- `main` is protected on GitHub: pull requests only, `ci-ok` must pass, no force pushes, applies to admins too.
 
 ## 7. Open decisions
 
 - Hosting provider (must support preview deployments)
-- Backend: Supabase or alternative
 - Map tile provider and routing provider (cost, licensing, regional coverage, privacy)
+- Formatter for the format-on-edit hook
 - Launch geography
 - Discord: shared `#requests` channel vs direct messages to the bot
 
-## 8. Bootstrap tasks for Claude Code
+## 8. Bootstrap tasks for Claude Code (done 2026-11-11)
 
-When asked to bootstrap the setup, do these in order and ask before choosing any provider or framework:
+Kept for reference. These were done in order, without choosing any provider or framework:
 1. Create `.claude/rules`, `.claude/skills`, `.claude/agents` and a `.gitignore` covering `.env*` and `.claude/settings.local.json`.
 2. Write the skills `write-spec` and `privacy-review`.
 3. Write the subagents `implementer`, `test-runner` and `reviewer`.
