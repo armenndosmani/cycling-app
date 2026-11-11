@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from "@/config/api";
+import { getApiBaseUrl } from '@/config/api';
 
 const DEFAULT_TIMEOUT_MS = 5000;
 
@@ -8,7 +8,7 @@ export class ApiError extends Error {
     readonly status?: number,
   ) {
     super(message);
-    this.name = "ApiError";
+    this.name = 'ApiError';
   }
 }
 
@@ -19,7 +19,7 @@ export async function getJson<T>(path: string, timeoutMs = DEFAULT_TIMEOUT_MS): 
 
   try {
     const response = await fetch(`${getApiBaseUrl()}${path}`, {
-      headers: { Accept: "application/json" },
+      headers: { Accept: 'application/json' },
       signal: controller.signal,
     });
     if (!response.ok) {
@@ -30,7 +30,7 @@ export async function getJson<T>(path: string, timeoutMs = DEFAULT_TIMEOUT_MS): 
     if (error instanceof ApiError) {
       throw error;
     }
-    const message = controller.signal.aborted ? "Request timed out" : "Backend not reachable";
+    const message = controller.signal.aborted ? 'Request timed out' : 'Backend not reachable';
     throw new ApiError(message);
   } finally {
     clearTimeout(timer);
