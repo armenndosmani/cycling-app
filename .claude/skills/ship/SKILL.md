@@ -9,7 +9,8 @@ Goal: a PR with green CI and a clear description. You never merge and never depl
 
 ## 1. Check the branch
 
-- Run `git branch --show-current`. If it is `main`, stop: create `feat/<name>` or `fix/<name>` first.
+- Run `git branch --show-current`. If it is `main`, stop: create `<type>/<issue>-<short-name>` first (e.g. `feat/31-formatters`). No issue yet? Create one with `gh issue create`.
+- Never rename a branch that has an open PR: GitHub closes the PR.
 - `git status`: everything that belongs to the change is committed; nothing else (no `.env`, no build output, no `docs/presentations/`).
 
 ## 2. Local checks
@@ -25,7 +26,7 @@ Fix failures before pushing. If the change touches personal data, location, rout
 
 1. `git push -u origin <branch>`
 2. `gh pr create --base main` with:
-   - a title in plain words
+   - a title that starts with the issue number(s), then plain words: `[#31] Formatters for mobile and backend`
    - Summary: what changed and why, grouped by backend / mobile / docs
    - Tested: what you ran and the result; say plainly what was not tested (e.g. not run on a device)
    - `Closes #<issue>` for each ticket the PR finishes
