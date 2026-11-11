@@ -30,3 +30,12 @@ Confirmed decisions only. One line each: `YYYY-MM-DD | decision | why`. Newest a
 2026-11-11 | Minimum age 16 to create an account; rides outside urban areas are 18+ only; hiking (if added later) is 18+ only | BA decision for rider safety; 16 works in every EU country without parental consent. Still open: how "urban" is defined and how age is confirmed (needs legal review)
 2026-11-11 | Hosting: Hetzner, EU (Germany) | EU data residency, flat pricing, enough memory to self-host routing
 2026-11-11 | Transactional email (sign-in codes, notifications): Mailjet | EU-based provider; needs a data processing agreement before launch
+2026-11-11 | A ride is "urban" when its whole route stays inside one city's boundary (OpenStreetMap administrative boundary); the server decides this automatically. Every other ride is 18+ | Matches the BA rule ("inside of city") and cannot be bypassed by the ride admin
+2026-11-11 | Age is self-declared, never verified: "I am 16 or older" at sign-up, and a one-time "I am 18 or older" confirmation before joining an 18+ ride. Store only the confirmations and their date, never a birth date | Minimum data. Terms must say that riders who lie about their age break the terms (needs legal review)
+2026-11-11 | Hiking is out of scope for now; may be added later | BA decision
+2026-11-11 | Map tiles: self-hosted OpenStreetMap vector tiles (Protomaps basemap + Martin tile server) on our own server; MapTiler kept as a fallback | No third party sees map views, flat cost, no tracing restrictions
+2026-11-11 | Routing: self-hosted GraphHopper (Apache 2.0) with one profile per discipline; BRouter may be added later for gravel/MTB | Hosted routing terms forbid storing routes; Java fits the team
+2026-11-11 | Place search: self-hosted Photon | Searches reveal where riders go; the public Nominatim service forbids app-scale use
+2026-11-11 | Use PostGIS for route geometry and spatial queries | Needed for "rides near me", the urban check and map layers
+2026-11-11 | Launch region is decided before release; development uses a small OpenStreetMap extract | Not needed to build the route planner
+2026-11-11 | Route planner rules: loops allowed; no straight off-road segments in the MVP; surface breakdown shown; metric units only; a ride keeps its own copy of the route; limits (25 waypoints, route in under 3 s for up to 200 km) confirmed after the proof of concept; deleted data stays in backups for at most 30 days (needs legal review) | Simple MVP choices proposed by Claude and accepted by the BA

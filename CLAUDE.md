@@ -6,7 +6,7 @@ Team of two. The **developer** builds, reviews and merges. The **BA** (business 
 
 ## Status
 
-Early stage. First priority: route planner and event creation. Stack is decided (see below). Product name, map/routing providers and launch geography are NOT decided. Hosting is Hetzner (EU). Never assume a provider: propose options with trade-offs (cost, privacy, lock-in, coverage) and let the team decide.
+Early stage. First priority: route planner and event creation. Stack is decided (see below). Product name and launch geography are NOT decided. Hosting is Hetzner (EU); maps, routing and place search are self-hosted (see decisions). Never assume a provider: propose options with trade-offs (cost, privacy, lock-in, coverage) and let the team decide.
 
 ## Where knowledge lives (read on demand)
 
@@ -25,7 +25,7 @@ One repo. No web app for now.
 - `backend/`: Spring Boot 4.1 on Java 25, Maven, REST + WebSocket (chat), Flyway migrations
 - PostgreSQL 18, managed by the team; S3-compatible file storage for avatars
 
-Third-party services (map tiles, routing, push notifications) are NOT decided yet. Transactional email: Mailjet.
+Self-hosted on our own server: map tiles (Protomaps + Martin), routing (GraphHopper), place search (Photon), PostGIS. Transactional email: Mailjet. Push notifications are NOT decided yet.
 
 ## Commands
 
