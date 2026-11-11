@@ -1,0 +1,417 @@
+{
+  "common": {
+    "back": "Back",
+    "loading": "Loading"
+  },
+  "errors": {
+    "network": "Can't reach the server. Check your connection and try again.",
+    "timeout": "The server took too long to answer. Try again.",
+    "server": "Something went wrong on our side. Try again later.",
+    "invalidInput": "Check your input and try again.",
+    "sessionExpired": "You have been signed out. Please sign in again.",
+    "unexpected": "Something went wrong. Try again.",
+    "rateLimitedSeconds_one": "Too many attempts. Try again in {{count}} second.",
+    "rateLimitedSeconds_other": "Too many attempts. Try again in {{count}} seconds.",
+    "rateLimitedMinutes_one": "Too many attempts. Try again in {{count}} minute.",
+    "rateLimitedMinutes_other": "Too many attempts. Try again in {{count}} minutes.",
+    "rateLimitedLater": "Too many attempts. Try again later."
+  },
+  "auth": {
+    "email": {
+      "title": "Sign in",
+      "heading": "Sign in or create an account",
+      "intro": "Enter your email address and we'll send you a 6-digit code. No password needed.",
+      "label": "Email address",
+      "placeholder": "you@example.com",
+      "invalid": "Enter a valid email address.",
+      "submit": "Send code"
+    },
+    "code": {
+      "title": "Enter code",
+      "heading": "Check your email",
+      "intro": "We sent a 6-digit code to {{email}}. It is valid for 10 minutes.",
+      "label": "6-digit code",
+      "hint": "Enter the 6 digits from the email",
+      "invalidFormat": "Enter the 6 digits from the email.",
+      "invalid": "That code is not valid or has expired.",
+      "submit": "Continue",
+      "resend": "Send a new code",
+      "resendIn_one": "Send a new code in {{count}} second",
+      "resendIn_other": "Send a new code in {{count}} seconds",
+      "resent": "We sent you a new code.",
+      "changeEmail": "Use a different email address"
+    },
+    "register": {
+      "title": "Create account",
+      "heading": "Create your account",
+      "intro": "There is no account for {{email}} yet. To create one, please confirm both points.",
+      "age16": "I am 16 or older",
+      "terms": "I accept the terms of use and privacy notice",
+      "termsLink": "Read the terms of use",
+      "privacyLink": "Read the privacy notice",
+      "documentUnavailableTitle": "Not available yet",
+      "documentUnavailable": "This document will be published before the app launches.",
+      "missing": "Tick both boxes to create your account.",
+      "missingTermsVersion": "We couldn't load the current terms. Go back and try again.",
+      "submit": "Create account"
+    }
+  },
+  "profile": {
+    "setup": {
+      "heading": "Choose your display name",
+      "intro": "Other riders see this name, never your email address. It doesn't have to be unique and you can change it later.",
+      "nameLabel": "Display name",
+      "nameHint": "2 to 40 characters",
+      "nameInvalid": "Use 2 to 40 characters.",
+      "bikesHeading": "What do you ride? (optional)",
+      "submit": "Save and continue"
+    },
+    "bicycleTypes": {
+      "ROAD": "Road",
+      "GRAVEL": "Gravel",
+      "MTB": "Mountain bike",
+      "URBAN": "Urban"
+    }
+  },
+  "home": {
+    "signedInAs": "Signed in as {{name}}",
+    "profileUnavailable": "Your profile could not be loaded.",
+    "reloadProfile": "Load profile again",
+    "planRoute": "Plan a route",
+    "myRoutes": "My routes",
+    "myRides": "My rides",
+    "createRide": "Create a ride",
+    "signOut": "Sign out"
+  },
+  "planner": {
+    "title": "Plan a route",
+    "mapLabel": "Map. Tap to set the start, the destination or a stop.",
+    "hint": {
+      "start": "Tap the map or search for a place to set the start.",
+      "destination": "Now set the destination. For a loop, use the start as destination.",
+      "editing": "Tap the map to add a stop. Drag a point to move it."
+    },
+    "attributionHint": "Opens the OpenStreetMap copyright page in your browser",
+    "useMyLocation": "Use my location",
+    "useMyLocationHint": "Centres the map once on where you are. Your location is not saved.",
+    "locationDenied": "Location permission was not given. You can still tap the map or search.",
+    "locationUnavailable": "Your location could not be found right now.",
+    "waypointLimit": "A route can have at most {{max}} stops. Remove one to add another.",
+    "discipline": {
+      "label": "Discipline"
+    },
+    "search": {
+      "label": "Search for a place",
+      "placeholder": "Town, street or place",
+      "hint": "At least 2 characters",
+      "searching": "Searching",
+      "noResults": "No places found.",
+      "unavailable": "Place search is not available right now. Try again later.",
+      "resultHint": "Adds this place to the route"
+    },
+    "points": {
+      "heading": "Points",
+      "start": "Start",
+      "destination": "Destination",
+      "waypoint": "Stop {{number}}",
+      "onMap": "Point on the map",
+      "moveUp": "Up",
+      "moveDown": "Down",
+      "remove": "Remove",
+      "moveUpLabel": "Move {{point}} earlier",
+      "moveDownLabel": "Move {{point}} later",
+      "removeLabel": "Remove {{point}}",
+      "markerHint": "Drag to move this point"
+    },
+    "actions": {
+      "undo": "Undo",
+      "undoHint": "Undoes the last change to the points",
+      "loop": "Back to start",
+      "loopHint": "Uses the start as destination, for a loop",
+      "newRoute": "New route",
+      "save": "Save",
+      "saveHint": "Saves the route as a private draft",
+      "myRoutes": "My routes",
+      "createRide": "Create ride",
+      "createRideHint": "Creates a group ride from this saved route"
+    },
+    "status": {
+      "calculating": "Calculating route",
+      "notFound": "No route found for this discipline. Try moving a point or choosing another discipline. Your points are kept.",
+      "unavailable": "The route service is not available right now. Your points are kept.",
+      "retry": "Try again",
+      "unsaved": "Unsaved changes",
+      "editing": "Editing \"{{name}}\""
+    },
+    "stats": {
+      "distance": "Distance",
+      "distanceValue": "{{km}} km",
+      "distanceLabel": "Distance {{km}} kilometres",
+      "ascend": "Elevation gain",
+      "ascendValue": "{{meters}} m",
+      "ascendLabel": "Elevation gain {{meters}} metres",
+      "elevationUnavailable": "Elevation not available"
+    },
+    "profile": {
+      "heading": "Elevation profile",
+      "label": "Elevation profile from {{min}} to {{max}} metres. Swipe up or down to move the marker along the route.",
+      "position": "{{km}} km, {{meters}} m",
+      "range": "{{min}} to {{max}} m",
+      "touchHint": "Touch the profile to mark the point on the map."
+    },
+    "surfaces": {
+      "heading": "Surfaces",
+      "item": "{{surface}}: {{percent}} %",
+      "asphalt": "Asphalt",
+      "concrete": "Concrete",
+      "paving_stones": "Paving stones",
+      "cobblestone": "Cobblestone",
+      "compacted": "Compacted",
+      "fine_gravel": "Fine gravel",
+      "gravel": "Gravel",
+      "unpaved": "Unpaved",
+      "ground": "Ground",
+      "dirt": "Dirt",
+      "grass": "Grass",
+      "sand": "Sand",
+      "wood": "Wood",
+      "other": "Other",
+      "unknown": "Unknown"
+    },
+    "discard": {
+      "title": "Discard unsaved changes?",
+      "message": "The route you are planning has changes that are not saved.",
+      "confirm": "Discard",
+      "cancel": "Keep editing"
+    }
+  },
+  "routeDetails": {
+    "saveTitle": "Save route",
+    "renameTitle": "Rename route",
+    "intro": "Saved routes are private drafts. Only you can see them.",
+    "nameLabel": "Name",
+    "nameHint": "1 to 80 characters",
+    "nameRequired": "Enter a name.",
+    "nameTooLong": "Use at most 80 characters.",
+    "noteLabel": "Note (optional)",
+    "noteHint": "Up to 1,000 characters",
+    "noteTooLong": "Use at most 1,000 characters.",
+    "save": "Save",
+    "notReady": "Set a start and a destination and wait for the route before saving.",
+    "loadFailed": "The route could not be loaded."
+  },
+  "routes": {
+    "title": "My routes",
+    "empty": "You have no saved routes yet.",
+    "planFirst": "Plan a route",
+    "summary": "{{discipline}} · {{distance}} · {{ascend}}",
+    "rowLabel": "{{name}}, {{summary}}",
+    "openHint": "Opens the route in the planner",
+    "rename": "Rename",
+    "renameLabel": "Rename {{name}}",
+    "delete": "Delete",
+    "deleteLabel": "Delete {{name}}",
+    "deleteTitle": "Delete route?",
+    "deleteMessage": "\"{{name}}\" will be removed for good.",
+    "deleteConfirm": "Delete",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "opening": "Opening route",
+    "createRide": "Create ride",
+    "createRideLabel": "Create a ride from {{name}}"
+  },
+  "rides": {
+    "title": "My rides",
+    "create": "Create a ride",
+    "createHint": "Starts a new ride without a route. To use a route, create the ride from My routes.",
+    "empty": "You have no rides yet.",
+    "retry": "Try again",
+    "openHint": "Opens the ride",
+    "rowLabel": "{{name}}. {{badges}}. {{when}}. {{details}}",
+    "separator": " · ",
+    "labelSeparator": ", ",
+    "noDate": "No date yet",
+    "when": "{{date}}, {{time}}",
+    "whenWithZone": "{{date}}, {{time}} · {{zone}}",
+    "participants": "{{confirmed}} of {{limit}} places taken",
+    "badge": {
+      "draft": "Draft",
+      "cancelled": "Cancelled",
+      "past": "Past"
+    },
+    "role": {
+      "ADMIN": "You are the admin"
+    },
+    "distance": {
+      "calculated": "{{km}} km",
+      "planned": "about {{km}} km (planned)",
+      "none": "No distance yet"
+    },
+    "pace": {
+      "RELAXED": "Relaxed",
+      "STEADY": "Steady",
+      "FAST": "Fast",
+      "MIXED": "Mixed, with regroups"
+    },
+    "access": {
+      "OPEN": "Open",
+      "APPROVAL": "Approval required",
+      "INVITE_ONLY": "Invite only"
+    },
+    "accessHelp": {
+      "OPEN": "Riders join directly while places are left. When the ride is full, nobody else can join.",
+      "APPROVAL": "Riders ask to join. You accept or reject each request.",
+      "INVITE_ONLY": "Only riders you invite can join. The ride never appears in search or discovery."
+    },
+    "ageRating": {
+      "sixteen": "16+",
+      "eighteen": "18+",
+      "sixteenLabel": "Age rating 16 plus: the route stays inside one city",
+      "eighteenLabel": "Age rating 18 plus"
+    },
+    "form": {
+      "createTitle": "Create ride",
+      "editTitle": "Edit ride",
+      "intro": "Drafts are visible only to you. Publish the ride when the details are complete.",
+      "loadFailed": "The ride could not be loaded.",
+      "routeLoadFailed": "The route could not be loaded.",
+      "name": "Ride name",
+      "nameHint": "3 to 80 characters",
+      "description": "Description (optional)",
+      "descriptionHint": "Up to 2,000 characters",
+      "date": "Date",
+      "time": "Start time",
+      "notSet": "Not set",
+      "pickerLabel": "{{field}}: {{value}}",
+      "pickerHint": "Opens a picker to change it",
+      "pickerDone": "Done",
+      "timeZone": "Times are local to the meeting point: {{zone}}",
+      "reconfirmNote": "If you move the date or time by more than 1 hour, riders who joined are asked to confirm again.",
+      "meetingPoint": "Meeting point",
+      "meetingPointMarker": "M",
+      "meetingPointSet": "Set on the map",
+      "meetingPointNone": "Not set yet",
+      "meetingPointPrivacy": "Only you and confirmed riders see the exact point. Others see an area of about 500 m.",
+      "meetingPointChoose": "Choose on the map",
+      "meetingPointChange": "Change meeting point",
+      "meetingPointHint": "Opens a map to set the meeting point",
+      "discipline": "Discipline",
+      "pace": "Pace",
+      "participantLimit": "Participant limit",
+      "participantLimitHint": "2 to 50 riders, including you",
+      "accessMode": "Who can join",
+      "route": "Route",
+      "routeAttached": "{{name}}, {{km}} km",
+      "routeCopy": "This ride has its own copy of a route: {{km}} km.",
+      "routeNone": "No route yet. You can attach one of your saved routes now or later.",
+      "attachRoute": "Attach a saved route",
+      "changeRoute": "Attach a different route",
+      "attachHint": "Choose one of your saved routes. The ride keeps its own copy.",
+      "targetDistance": "Target distance in km",
+      "targetDistanceHint": "1 to 500 km. Shown as \"about 60 km (planned)\" until a route is attached.",
+      "ageNote": "The age rating (16+ or 18+) is set automatically from the route: 16+ when it stays inside one city, otherwise 18+.",
+      "checkFields": "Check the marked fields.",
+      "saveDraft": "Save draft",
+      "saveDraftHint": "Saves the ride without publishing it. Only you can see it.",
+      "save": "Save changes",
+      "publish": "Publish",
+      "publishHint": "Checks all details and makes the ride visible to riders"
+    },
+    "fieldErrors": {
+      "required": "Required to publish.",
+      "nameRequired": "Enter a name for the ride.",
+      "meetingPointRequired": "Set a meeting point to publish.",
+      "nameLength": "Use 3 to 80 characters.",
+      "descriptionTooLong": "Use at most 2,000 characters.",
+      "invalid": "This value is not valid.",
+      "limitRange": "Enter a whole number from 2 to 50.",
+      "distanceRange": "Enter a distance from 1 to 500 km.",
+      "tooSoon": "The start must be at least 30 minutes from now.",
+      "inPast": "The start must be in the future.",
+      "server": "Check this value."
+    },
+    "errors": {
+      "limitBelowParticipants": "The participant limit can't be lower than the number of riders who have already joined.",
+      "ageRatingChangeBlocked": "This route would make the ride 18+, but riders under 18 have already joined. Keep the current route or choose one that stays inside one city.",
+      "adultConfirmationRequired": "This ride is 18+. Confirm that you are 18 or older to continue.",
+      "validation": "Some details are missing or not valid. Check the ride and try again.",
+      "publishIncomplete": "Some details are missing or not valid. Edit the ride to complete them, then publish.",
+      "notFound": "This ride does not exist any more, or you can't see it.",
+      "forbidden": "Only the ride admin can do this.",
+      "conflict": "The ride changed in the meantime. Go back, open it again and retry."
+    },
+    "adult": {
+      "title": "This is an 18+ ride",
+      "message": "Rides whose route leaves a city, or that have no route yet, are rated 18+. To create or publish one, confirm that you are 18 or older. We only store this confirmation and its date.",
+      "confirm": "I am 18 or older",
+      "decline": "Cancel"
+    },
+    "meetingPoint": {
+      "title": "Meeting point",
+      "mapLabel": "Map. Tap to set the meeting point.",
+      "hint": "Tap the map or search for a place to set the meeting point.",
+      "selected": "Meeting point set. Tap the map again to move it.",
+      "resultHint": "Sets this place as the meeting point",
+      "use": "Use this meeting point"
+    },
+    "attachRoute": {
+      "title": "Attach a route",
+      "intro": "The ride gets its own copy of the route. Later changes to the saved route do not change the ride.",
+      "empty": "You have no saved routes yet. Plan a route first.",
+      "hint": "Attaches this route to the ride"
+    },
+    "detail": {
+      "title": "Ride",
+      "fact": "{{label}}: {{value}}",
+      "when": "When",
+      "distance": "Distance",
+      "places": "Places",
+      "placesValue": "{{left}} of {{limit}} places left",
+      "full": "Full ({{limit}} of {{limit}} places taken)",
+      "admin": "Admin",
+      "ageRating": "Age rating",
+      "description": "Description",
+      "draftNote": "Draft: only you can see this ride.",
+      "pastNote": "This ride has taken place.",
+      "cancelled": "This ride was cancelled.",
+      "cancelMessage": "Message from the admin: {{message}}",
+      "needsReconfirmation": "The start time changed by more than 1 hour. Riders who joined are asked to confirm again.",
+      "meetingExact": "The exact meeting point is marked on the map.",
+      "meetingArea": "Meeting area: somewhere within the circle of about {{meters}} m. The exact point is shared with confirmed riders.",
+      "meetingNone": "No meeting point yet.",
+      "mapLabelExact": "Map with the route and the meeting point",
+      "mapLabelArea": "Map with the approximate meeting area",
+      "published": "The ride is published.",
+      "edit": "Edit",
+      "cancel": "Cancel ride",
+      "delete": "Delete draft",
+      "deleteTitle": "Delete draft?",
+      "deleteMessage": "\"{{name}}\" will be removed for good.",
+      "deleteConfirm": "Delete",
+      "keep": "Keep"
+    },
+    "cancel": {
+      "title": "Cancel ride",
+      "intro": "Riders who joined or were invited will see that the ride is cancelled. This cannot be undone.",
+      "messageLabel": "Message to riders (optional)",
+      "messageHint": "Up to 500 characters",
+      "messageTooLong": "Use at most 500 characters.",
+      "confirm": "Cancel ride",
+      "keep": "Keep ride"
+    }
+  },
+  "status": {
+    "title": "Backend status",
+    "checking": "Checking backend status",
+    "checkAgain": "Check again",
+    "checkAgainHint": "Checks again whether the backend is reachable",
+    "serverAddress": "Server address: {{url}}",
+    "result": {
+      "UP": "Up",
+      "DOWN": "Down",
+      "OUT_OF_SERVICE": "Out of service",
+      "UNKNOWN": "Unknown",
+      "unreachable": "Unreachable"
+    }
+  }
+}
