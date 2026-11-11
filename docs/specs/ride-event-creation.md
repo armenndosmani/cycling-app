@@ -48,7 +48,7 @@ Let a rider turn a planned route, or just an idea of a ride, into a group ride e
 - [ ] The admin cannot choose or override the age rating.
 - [ ] The rating is shown on the ride ("16+" or "18+") everywhere the ride appears.
 - [ ] Riders who have not confirmed "I am 18 or older" can see 18+ rides but cannot join them; the join check is enforced by the backend. (Joining itself is a separate spec.)
-- [ ] The rating is recalculated whenever the route changes.
+- [ ] The rating is recalculated whenever the route changes. A route change that would turn a 16+ ride into an 18+ ride is blocked while riders under 18 are confirmed, and the admin is told why.
 
 **Publishing and visibility**
 - [ ] The creator becomes the ride admin when the ride is created.
@@ -101,6 +101,7 @@ Let a rider turn a planned route, or just an idea of a ride, into a group ride e
 - Limits: 2 to 50 participants, published at least 30 minutes before the start. Drafts allowed.
 - Meeting point generalisation: about 500 m circle with a random offset fixed per ride.
 - Retention: 12 months after the start time, then anonymised.
+- A route change that would make the ride 18+ is blocked while riders under 18 are confirmed.
 
 ## Open questions
-- **Age rating changes after joining:** if a route change turns a 16+ ride into an 18+ ride while riders under 18 are confirmed, what happens? Suggestion: block the change and tell the admin why. *(BA)*
+None.
