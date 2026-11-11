@@ -40,3 +40,6 @@ Legend: **Who:** L = lawyer, T = team (developer + BA), D = developer.
 - [ ] Remove the npm overrides (zod, glob, minimatch) if upstream has caught up
 - [ ] Backups configured and a restore tested
 - [ ] Admin app or at least the moderation endpoints in place (issue #30)
+- [ ] Link the published terms of use and privacy notice on the sign-up screen (`mobile/src/app/(auth)/register.tsx`, currently a "not available yet" placeholder)
+- [ ] Remove the "Backend status" test screen from the signed-in home (`mobile/src/app/(app)/index.tsx`) once real screens exist
+- [ ] Sign-in tested end to end against the real backend on both platforms, including one-time-code autofill, 429 messages and token refresh after 15 minutes

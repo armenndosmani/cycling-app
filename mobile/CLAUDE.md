@@ -29,6 +29,14 @@ Run lint and typecheck before declaring any task done.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 
+## API and sign-in
+
+- `src/api/client.ts` `request()` for public endpoints; `session.authorized()` (`src/auth/session.ts`) for everything that needs sign-in. It adds the Bearer token and refreshes once on 401 (one shared refresh for concurrent requests).
+- Errors are `ApiError` with parsed Problem Details; show them with `errorMessage()` (`src/api/errorMessage.ts`), never the backend's text.
+- Tokens live only in `expo-secure-store` (`src/auth/tokenStorage.ts`). Never put them in AsyncStorage, files, route params or logs.
+- `useAuth()` (`src/auth/AuthProvider.tsx`) gives the session state and profile. Routes are guarded with `Stack.Protected` in `src/app/_layout.tsx`: `(auth)` when signed out, `display-name` until the rider has one, `(app)` otherwise.
+- Unit tests: `npm test` (Vitest in Node). Keep testable logic free of `react-native` imports; mock Expo modules with `vi.mock`.
+
 ## Text and accessibility
 
 Follow `docs/accessibility.md` (in `mobile/`) for every screen. In short:

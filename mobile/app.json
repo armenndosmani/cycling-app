@@ -29,7 +29,13 @@
           "imageWidth": 76
         }
       ],
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

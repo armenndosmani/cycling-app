@@ -42,6 +42,7 @@ Mobile (run from `mobile/`):
 - `npx expo start`: dev server. The app calls the backend on the dev server's host, port 8080, unless `EXPO_PUBLIC_API_URL` is set (see `mobile/.env.example`)
 - `npx tsc --noEmit` and `npx expo lint`: typecheck and lint (lint includes the Prettier check), run both before declaring work done
 - `npm run format`: format the mobile code with Prettier
+- `npm test`: unit tests (Vitest, Node) for plain TypeScript modules such as the API client and session
 - `npx expo install <pkg>`: add dependencies (never plain `npm install <pkg>`)
 
 ## Privacy rules (non-negotiable)

@@ -19,6 +19,14 @@ export const colors = {
 /** Minimum size of anything tappable, in points (WCAG 2.5.8 / Apple HIG 44 pt). */
 export const MIN_TOUCH_TARGET = 44;
 
+/** Shared `screenOptions` for every Stack navigator. */
+export const stackScreenOptions = {
+  headerStyle: { backgroundColor: colors.background },
+  headerTintColor: colors.text,
+  headerShadowVisible: false,
+  contentStyle: { backgroundColor: colors.background },
+};
+
 export const navigationTheme: Theme = {
   ...DarkTheme,
   colors: {

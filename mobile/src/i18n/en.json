@@ -1,9 +1,83 @@
 {
+  "common": {
+    "back": "Back",
+    "loading": "Loading"
+  },
   "errors": {
-    "network": "Backend not reachable",
-    "timeout": "Request timed out",
-    "http": "Request failed with status {{status}}",
-    "unexpected": "Unexpected error"
+    "network": "Can't reach the server. Check your connection and try again.",
+    "timeout": "The server took too long to answer. Try again.",
+    "server": "Something went wrong on our side. Try again later.",
+    "invalidInput": "Check your input and try again.",
+    "sessionExpired": "You have been signed out. Please sign in again.",
+    "unexpected": "Something went wrong. Try again.",
+    "rateLimitedSeconds_one": "Too many attempts. Try again in {{count}} second.",
+    "rateLimitedSeconds_other": "Too many attempts. Try again in {{count}} seconds.",
+    "rateLimitedMinutes_one": "Too many attempts. Try again in {{count}} minute.",
+    "rateLimitedMinutes_other": "Too many attempts. Try again in {{count}} minutes.",
+    "rateLimitedLater": "Too many attempts. Try again later."
+  },
+  "auth": {
+    "email": {
+      "title": "Sign in",
+      "heading": "Sign in or create an account",
+      "intro": "Enter your email address and we'll send you a 6-digit code. No password needed.",
+      "label": "Email address",
+      "placeholder": "you@example.com",
+      "invalid": "Enter a valid email address.",
+      "submit": "Send code"
+    },
+    "code": {
+      "title": "Enter code",
+      "heading": "Check your email",
+      "intro": "We sent a 6-digit code to {{email}}. It is valid for 10 minutes.",
+      "label": "6-digit code",
+      "hint": "Enter the 6 digits from the email",
+      "invalidFormat": "Enter the 6 digits from the email.",
+      "invalid": "That code is not valid or has expired.",
+      "submit": "Continue",
+      "resend": "Send a new code",
+      "resendIn_one": "Send a new code in {{count}} second",
+      "resendIn_other": "Send a new code in {{count}} seconds",
+      "resent": "We sent you a new code.",
+      "changeEmail": "Use a different email address"
+    },
+    "register": {
+      "title": "Create account",
+      "heading": "Create your account",
+      "intro": "There is no account for {{email}} yet. To create one, please confirm both points.",
+      "age16": "I am 16 or older",
+      "terms": "I accept the terms of use and privacy notice",
+      "termsLink": "Read the terms of use",
+      "privacyLink": "Read the privacy notice",
+      "documentUnavailableTitle": "Not available yet",
+      "documentUnavailable": "This document will be published before the app launches.",
+      "missing": "Tick both boxes to create your account.",
+      "missingTermsVersion": "We couldn't load the current terms. Go back and try again.",
+      "submit": "Create account"
+    }
+  },
+  "profile": {
+    "setup": {
+      "heading": "Choose your display name",
+      "intro": "Other riders see this name, never your email address. It doesn't have to be unique and you can change it later.",
+      "nameLabel": "Display name",
+      "nameHint": "2 to 40 characters",
+      "nameInvalid": "Use 2 to 40 characters.",
+      "bikesHeading": "What do you ride? (optional)",
+      "submit": "Save and continue"
+    },
+    "bicycleTypes": {
+      "ROAD": "Road",
+      "GRAVEL": "Gravel",
+      "MTB": "Mountain bike",
+      "URBAN": "Urban"
+    }
+  },
+  "home": {
+    "signedInAs": "Signed in as {{name}}",
+    "profileUnavailable": "Your profile could not be loaded.",
+    "reloadProfile": "Load profile again",
+    "signOut": "Sign out"
   },
   "status": {
     "title": "Backend status",

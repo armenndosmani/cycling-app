@@ -12,10 +12,11 @@ type Props = {
   disabled?: boolean;
   /** Shows a spinner and marks the button busy for screen readers. */
   busy?: boolean;
-  variant?: 'primary' | 'secondary';
+  /** `link` looks like a text link and is announced as a link. */
+  variant?: 'primary' | 'secondary' | 'link';
 };
 
-/** Accessible button: role "button", disabled/busy state, at least 44 pt tall, scales with the font size. */
+/** Accessible button: role, disabled/busy state, at least 44 pt tall, scales with the font size. */
 export function Button({
   label,
   onPress,
@@ -26,30 +27,26 @@ export function Button({
   variant = 'primary',
 }: Props) {
   const inactive = disabled || busy;
-  const primary = variant === 'primary';
 
   return (
     <Pressable
-      accessibilityRole="button"
+      accessibilityRole={variant === 'link' ? 'link' : 'button'}
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: inactive, busy }}
       onPress={onPress}
       disabled={inactive}
-      hitSlop={8}
       style={({ pressed }) => [
         styles.button,
-        primary ? styles.primary : styles.secondary,
+        variantStyles[variant],
         pressed && styles.pressed,
         inactive && styles.inactive,
       ]}
     >
       {busy ? (
-        <ActivityIndicator color={primary ? colors.onAccent : colors.text} />
+        <ActivityIndicator color={variant === 'primary' ? colors.onAccent : colors.text} />
       ) : (
-        <Text style={[styles.text, primary ? styles.primaryText : styles.secondaryText]}>
-          {label}
-        </Text>
+        <Text style={[styles.text, textStyles[variant]]}>{label}</Text>
       )}
     </Pressable>
   );
@@ -65,14 +62,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
   },
-  primary: {
-    backgroundColor: colors.accent,
-  },
-  secondary: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.textMuted,
-  },
   pressed: {
     opacity: 0.8,
   },
@@ -84,10 +73,32 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  primaryText: {
+});
+
+const variantStyles = StyleSheet.create({
+  primary: {
+    backgroundColor: colors.accent,
+  },
+  secondary: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.textMuted,
+  },
+  link: {
+    backgroundColor: 'transparent',
+    paddingHorizontal: 4,
+  },
+});
+
+const textStyles = StyleSheet.create({
+  primary: {
     color: colors.onAccent,
   },
-  secondaryText: {
+  secondary: {
     color: colors.text,
+  },
+  link: {
+    color: colors.accent,
+    textDecorationLine: 'underline',
   },
 });

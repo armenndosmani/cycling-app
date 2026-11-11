@@ -7,5 +7,5 @@ export type Health = {
 };
 
 export function getHealth(): Promise<Health> {
-  return getJson<Health>('/actuator/health');
+  return getJson<Health>('/actuator/health', 5000);
 }
