@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { ApiError } from '@/api/client';
 import { getHealth, type HealthStatus } from '@/api/health';
+import { Button } from '@/components/Button';
 import { getApiBaseUrl } from '@/config/api';
 import { colors } from '@/constants/theme';
 
 type BackendState =
   | { kind: 'checking' }
   | { kind: 'reachable'; status: HealthStatus }
-  | { kind: 'unreachable'; reason: string };
+  | { kind: 'unreachable'; error: unknown };
 
 export default function Index() {
+  const { t } = useTranslation();
   const [backend, setBackend] = useState<BackendState>({ kind: 'checking' });
   const [attempt, setAttempt] = useState(0);
 
@@ -22,8 +25,7 @@ export default function Index() {
         if (!cancelled) setBackend({ kind: 'reachable', status: health.status });
       })
       .catch((error: unknown) => {
-        const reason = error instanceof ApiError ? error.message : 'Unexpected error';
-        if (!cancelled) setBackend({ kind: 'unreachable', reason });
+        if (!cancelled) setBackend({ kind: 'unreachable', error });
       });
     return () => {
       cancelled = true;
@@ -35,36 +37,52 @@ export default function Index() {
     setAttempt((n) => n + 1);
   };
 
+  const errorMessage = (error: unknown): string => {
+    if (!(error instanceof ApiError)) return t('errors.unexpected');
+    if (error.kind === 'http') return t('errors.http', { status: error.status });
+    return t(`errors.${error.kind}`);
+  };
+
   const isUp = backend.kind === 'reachable' && backend.status === 'UP';
+  const statusText =
+    backend.kind === 'reachable'
+      ? t(`status.result.${backend.status}`)
+      : t('status.result.unreachable');
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Backend status</Text>
+      <Text accessibilityRole="header" style={styles.title}>
+        {t('status.title')}
+      </Text>
 
-      <View style={styles.card}>
+      {/* Live region: screen readers announce the result when the check finishes */}
+      <View style={styles.card} accessible accessibilityLiveRegion="polite">
         {backend.kind === 'checking' ? (
-          <ActivityIndicator color={colors.accent} />
+          <ActivityIndicator color={colors.accent} accessibilityLabel={t('status.checking')} />
         ) : (
           <>
-            <View style={[styles.dot, { backgroundColor: isUp ? colors.accent : colors.danger }]} />
-            <Text style={styles.status}>
-              {backend.kind === 'reachable' ? backend.status : 'Unreachable'}
-            </Text>
-            {backend.kind === 'unreachable' && <Text style={styles.muted}>{backend.reason}</Text>}
+            {/* The dot is decorative; the status text carries the meaning */}
+            <View
+              importantForAccessibility="no-hide-descendants"
+              accessibilityElementsHidden
+              style={[styles.dot, { backgroundColor: isUp ? colors.accent : colors.danger }]}
+            />
+            <Text style={styles.status}>{statusText}</Text>
+            {backend.kind === 'unreachable' && (
+              <Text style={styles.muted}>{errorMessage(backend.error)}</Text>
+            )}
           </>
         )}
       </View>
 
-      <Text style={styles.muted}>{getApiBaseUrl()}</Text>
+      <Text style={styles.muted}>{t('status.serverAddress', { url: getApiBaseUrl() })}</Text>
 
-      <Pressable
-        accessibilityRole="button"
+      <Button
+        label={t('status.checkAgain')}
+        accessibilityHint={t('status.checkAgainHint')}
         onPress={check}
         disabled={backend.kind === 'checking'}
-        style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-      >
-        <Text style={styles.buttonText}>Check again</Text>
-      </Pressable>
+      />
     </View>
   );
 }
@@ -104,18 +122,6 @@ const styles = StyleSheet.create({
   muted: {
     color: colors.textMuted,
     fontSize: 13,
-  },
-  button: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 10,
-    backgroundColor: colors.accent,
-  },
-  buttonPressed: {
-    opacity: 0.8,
-  },
-  buttonText: {
-    color: colors.background,
-    fontWeight: '600',
+    textAlign: 'center',
   },
 });

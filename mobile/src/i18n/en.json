@@ -1,0 +1,22 @@
+{
+  "errors": {
+    "network": "Backend not reachable",
+    "timeout": "Request timed out",
+    "http": "Request failed with status {{status}}",
+    "unexpected": "Unexpected error"
+  },
+  "status": {
+    "title": "Backend status",
+    "checking": "Checking backend status",
+    "checkAgain": "Check again",
+    "checkAgainHint": "Checks again whether the backend is reachable",
+    "serverAddress": "Server address: {{url}}",
+    "result": {
+      "UP": "Up",
+      "DOWN": "Down",
+      "OUT_OF_SERVICE": "Out of service",
+      "UNKNOWN": "Unknown",
+      "unreachable": "Unreachable"
+    }
+  }
+}

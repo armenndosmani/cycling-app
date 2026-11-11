@@ -2,12 +2,16 @@ import { getApiBaseUrl } from '@/config/api';
 
 const DEFAULT_TIMEOUT_MS = 5000;
 
+/** What went wrong, so screens can pick a translated message (see `errors.*` in en.json). */
+export type ApiErrorKind = 'network' | 'timeout' | 'http';
+
 export class ApiError extends Error {
   constructor(
-    message: string,
+    readonly kind: ApiErrorKind,
     readonly status?: number,
   ) {
-    super(message);
+    // The message is for developers only; never show it to users.
+    super(status === undefined ? `API error: ${kind}` : `API error: ${kind} ${status}`);
     this.name = 'ApiError';
   }
 }
@@ -23,15 +27,14 @@ export async function getJson<T>(path: string, timeoutMs = DEFAULT_TIMEOUT_MS): 
       signal: controller.signal,
     });
     if (!response.ok) {
-      throw new ApiError(`Request failed with status ${response.status}`, response.status);
+      throw new ApiError('http', response.status);
     }
     return (await response.json()) as T;
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
     }
-    const message = controller.signal.aborted ? 'Request timed out' : 'Backend not reachable';
-    throw new ApiError(message);
+    throw new ApiError(controller.signal.aborted ? 'timeout' : 'network');
   } finally {
     clearTimeout(timer);
   }
