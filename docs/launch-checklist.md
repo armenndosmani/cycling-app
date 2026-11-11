@@ -18,6 +18,7 @@ Legend: **Who:** L = lawyer, T = team (developer + BA), D = developer.
 - [ ] Retention periods: backups 30 days, past and cancelled rides 12 months then anonymised, ride chat 12 months, logs
 - [ ] EU Digital Services Act: notice-and-action, statement of reasons, contact point; which duties apply at our size
 - [ ] Accessibility: confirm whether the European Accessibility Act applies to us
+- [ ] Inactive accounts: delete accounts unused for a long time (e.g. 2 years)?
 - [ ] Garmin Connect developer terms (income permission, FIT SDK licence) before any Garmin integration
 - [ ] Strava API terms before any Strava integration
 - [ ] Trademark clearance for the chosen product name (TMview, WIPO Global Brand Database), and whether to file an EU trademark
