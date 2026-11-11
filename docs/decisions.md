@@ -59,3 +59,7 @@ Confirmed decisions only. One line each: `YYYY-MM-DD | decision | why`. Newest a
 2026-11-11 | Accessibility target: WCAG 2.2 AA (screen reader labels, dynamic text size, contrast, no colour-only meaning) | Cheap when built in from the start
 2026-11-11 | Joining a ride shows a short safety notice (rides are organised by riders, not by us; check the route, ride within your limits, follow traffic rules) | Sets expectations; matches the planned terms clause
 2026-11-11 | Running-cost budget is decided before going live (estimate: about EUR 120-150 per month plus about EUR 150 per year) | Not going live yet
+2026-11-11 | Formatters: Prettier for mobile, spring-javaformat for the backend (tabs, matches existing code); format on edit and checked in CI | One consistent style whoever writes the code
+2026-11-11 | The app is always dark in the MVP; a light theme may come later | One theme to design and test
+2026-11-11 | Until go-live, every PR is merged once CI is green; the team runs a final test before production | Not live yet. Merging stays manual until the guard hook and settings are changed by the developer
+2026-11-11 | Everything to check by hand before go-live (legal review, accounts, final tests) lives in docs/launch-checklist.md | One list to work through at the end

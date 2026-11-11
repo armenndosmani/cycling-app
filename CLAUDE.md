@@ -14,6 +14,7 @@ Early stage. First priority: route planner and event creation. Stack is decided 
 - `docs/setup-and-workflow.md`: how this team works with you (Discord, context strategy, CI/CD, tools)
 - `docs/decisions.md`: confirmed decisions. Only entries here are confirmed; everything else is a suggestion or open question
 - `docs/specs/`: one spec per feature, based on `docs/specs/_template.md`
+- `docs/launch-checklist.md`: manual checks before going live (legal review, accounts, final tests). Add anything flagged "check later" here, and remind the developer of this list before any production release
 
 When a decision is made in Discord or in a session, append it to `docs/decisions.md` as `YYYY-MM-DD | decision | why`.
 
