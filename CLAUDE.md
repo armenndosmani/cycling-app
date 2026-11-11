@@ -25,7 +25,7 @@ One repo. No web app for now.
 - `backend/`: Spring Boot 4.1 on Java 25, Maven, REST + WebSocket (chat), Flyway migrations
 - PostgreSQL 18, managed by the team; S3-compatible file storage for avatars
 
-Self-hosted on our own server: map tiles (Protomaps + Martin), routing (GraphHopper), place search (Photon), PostGIS. Transactional email: Mailjet. Push notifications are NOT decided yet.
+Self-hosted on our own server: map tiles (Protomaps + Martin), routing (GraphHopper), place search (Photon), PostGIS. Transactional email: Mailjet. Push notifications: direct APNs/FCM, no third-party push service.
 
 ## Commands
 
