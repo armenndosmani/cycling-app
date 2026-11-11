@@ -31,7 +31,8 @@ Self-hosted on our own server: map tiles (Protomaps + Martin), routing (GraphHop
 ## Commands
 
 Backend (run from `backend/`, needs JDK 25 as `JAVA_HOME` and Docker running):
-- `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`: start the API on port 8080; Postgres starts automatically from `compose.yaml`. The `dev` profile enables `/v3/api-docs` and Swagger UI (off by default)
+- `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`: start the API on port 8080; Postgres and Mailpit start automatically from `compose.yaml`. Sign-in emails land in Mailpit (http://localhost:8025), never in a real inbox. The `dev` profile enables `/v3/api-docs` and Swagger UI (off by default)
+- Outside dev and tests the API does not start without: `APP_AUTH_JWT_SECRET` (at least 32 bytes, e.g. `openssl rand -base64 48`), `APP_MAIL_FROM`, and SMTP settings `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`, `SPRING_MAIL_PASSWORD` (Mailjet). Behind a reverse proxy also set `SERVER_FORWARD_HEADERS_STRATEGY=native`, or every rider shares one IP rate limit
 - `./mvnw verify`: build and run tests (Testcontainers starts Postgres). Fails on unformatted code
 - `./mvnw spring-javaformat:apply`: format the backend (spring-javaformat, tabs)
 - Only `/actuator/health` is exposed; keep other actuator endpoints closed

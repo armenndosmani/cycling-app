@@ -40,3 +40,5 @@ Legend: **Who:** L = lawyer, T = team (developer + BA), D = developer.
 - [ ] Remove the npm overrides (zod, glob, minimatch) if upstream has caught up
 - [ ] Backups configured and a restore tested
 - [ ] Admin app or at least the moderation endpoints in place (issue #30)
+- [ ] Production secrets set: `APP_AUTH_JWT_SECRET` (random, at least 32 bytes), Mailjet SMTP credentials, `APP_MAIL_FROM` on our domain (SPF/DKIM set up)
+- [ ] Reverse proxy passes the client IP (`SERVER_FORWARD_HEADERS_STRATEGY`), so sign-in rate limits work per rider; rate limits are in memory and assume a single backend instance
