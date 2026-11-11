@@ -25,3 +25,5 @@ Confirmed decisions only. One line each: `YYYY-MM-DD | decision | why`. Newest a
 2026-11-11 | Vulnerability gate in CI: npm audit (mobile) + OSV check of resolved Maven deps (backend), on every PR and weekly | Keeps the 0-vulnerability baseline without paid tools or NVD API keys
 2026-11-11 | Dependabot weekly; npm in lockfile-only mode so Expo SDK versions are never bumped automatically | Expo SDK upgrades must go through `npx expo install --fix`
 2026-11-11 | Claude Code guard hook (.claude/hooks/guard.mjs, Node) blocks .env access (except .env.example), git push to main and gh pr merge | Node runs the same on Windows and CI; branch protection remains the real enforcement
+2026-11-11 | Backend secure by default with Spring Security: stateless, every endpoint 401 unless explicitly opened, no generated default user | Server-side authorization rule; no endpoint can become public by accident before login is specified
+2026-11-11 | API errors use RFC 9457 Problem Details without exception messages, stack traces or rejected values | One error format for the app; no internal or personal data in responses

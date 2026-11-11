@@ -33,6 +33,8 @@ Backend (run from `backend/`, needs JDK 25 as `JAVA_HOME` and Docker running):
 - `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`: start the API on port 8080; Postgres starts automatically from `compose.yaml`. The `dev` profile enables `/v3/api-docs` and Swagger UI (off by default)
 - `./mvnw verify`: build and run tests (Testcontainers starts Postgres)
 - Only `/actuator/health` is exposed; keep other actuator endpoints closed
+- Secure by default (`config/SecurityConfig.java`): every endpoint returns 401 unless a rule opens it. A new feature opens only its own endpoints, with an explicit authorization rule and a test for it
+- Errors are RFC 9457 Problem Details (`web/ApiExceptionHandler.java`); never return exception messages, stack traces or rejected input values
 
 Mobile (run from `mobile/`):
 - `npx expo start`: dev server. The app calls the backend on the dev server's host, port 8080, unless `EXPO_PUBLIC_API_URL` is set (see `mobile/.env.example`)
