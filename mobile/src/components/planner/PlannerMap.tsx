@@ -9,22 +9,17 @@ import {
 } from '@maplibre/maplibre-react-native';
 import { useEffect, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import type { CalculatedRoute, LatLon } from '@/api/routes';
-import { getTilesBaseUrl } from '@/config/tiles';
+import { MapAttribution } from '@/components/map/MapAttribution';
 import { colors } from '@/constants/theme';
-import { buildMapStyle, MAP_ATTRIBUTION } from '@/map/mapStyle';
+import { appMapStyle } from '@/map/appMapStyle';
 import type { CameraRequest, Viewport } from '@/planner/plannerStore';
 import type { ListedPoint } from '@/planner/points';
 
-const OSM_COPYRIGHT_URL = 'https://www.openstreetmap.org/copyright';
-
 /** Shown until the rider has looked at another area (development data covers Luxembourg). */
 export const DEFAULT_VIEWPORT: Viewport = { center: [6.13, 49.61], zoom: 9 };
-
-// Built once: the style is large and never changes while the app runs
-const mapStyle = buildMapStyle(getTilesBaseUrl());
 
 type Props = {
   points: ListedPoint[];
@@ -83,7 +78,7 @@ export function PlannerMap({
     <View style={styles.container}>
       <Map
         style={styles.map}
-        mapStyle={mapStyle}
+        mapStyle={appMapStyle}
         accessibilityLabel={t('planner.mapLabel')}
         // The licence notice is shown as visible text below instead of the info button
         attribution={false}
@@ -176,15 +171,7 @@ export function PlannerMap({
         ))}
       </Map>
 
-      <Pressable
-        accessibilityRole="link"
-        accessibilityHint={t('planner.attributionHint')}
-        onPress={() => void Linking.openURL(OSM_COPYRIGHT_URL)}
-        style={styles.attribution}
-        hitSlop={14}
-      >
-        <Text style={styles.attributionText}>{MAP_ATTRIBUTION}</Text>
-      </Pressable>
+      <MapAttribution />
     </View>
   );
 }
@@ -230,18 +217,5 @@ const styles = StyleSheet.create({
     color: colors.background,
     fontSize: 13,
     fontWeight: '700',
-  },
-  attribution: {
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    backgroundColor: colors.background,
-    borderTopRightRadius: 6,
-  },
-  attributionText: {
-    color: colors.textMuted,
-    fontSize: 11,
   },
 });

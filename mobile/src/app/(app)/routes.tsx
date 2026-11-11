@@ -149,6 +149,7 @@ export default function RoutesScreen() {
           busy={busyId === item.id}
           onOpen={() => open(item)}
           onRename={() => router.push({ pathname: '/rename-route', params: { id: item.id } })}
+          onCreateRide={() => router.push({ pathname: '/ride-form', params: { routeId: item.id } })}
           onDelete={() => remove(item)}
         />
       )}
@@ -161,10 +162,11 @@ type RowProps = {
   busy: boolean;
   onOpen: () => void;
   onRename: () => void;
+  onCreateRide: () => void;
   onDelete: () => void;
 };
 
-function RouteRow({ route, busy, onOpen, onRename, onDelete }: RowProps) {
+function RouteRow({ route, busy, onOpen, onRename, onCreateRide, onDelete }: RowProps) {
   const { t } = useTranslation();
   const summary = t('routes.summary', {
     discipline: t(`profile.bicycleTypes.${route.discipline}`),
@@ -193,6 +195,13 @@ function RouteRow({ route, busy, onOpen, onRename, onDelete }: RowProps) {
         ) : null}
       </Pressable>
       <View style={styles.rowActions}>
+        <Button
+          variant="link"
+          label={t('routes.createRide')}
+          accessibilityLabel={t('routes.createRideLabel', { name: route.name })}
+          onPress={onCreateRide}
+          disabled={busy}
+        />
         <Button
           variant="link"
           label={t('routes.rename')}
@@ -258,6 +267,7 @@ const styles = StyleSheet.create({
   },
   rowActions: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'flex-end',
     gap: 16,
   },

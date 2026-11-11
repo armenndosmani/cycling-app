@@ -34,6 +34,11 @@ export async function updateMe(update: MeUpdate): Promise<Me> {
   return updated ?? getMe();
 }
 
+/** One-time "I am 18 or older" self-declaration (needed for 18+ rides). Only the date is stored. */
+export async function confirmAdult(): Promise<void> {
+  await session.authorized<void>('/api/me/adult-confirmation', { method: 'POST' });
+}
+
 /** Display name rule from the accounts spec: 2 to 40 characters after trimming. */
 export function isValidDisplayName(name: string): boolean {
   const length = [...name.trim()].length;

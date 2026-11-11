@@ -87,6 +87,12 @@ export default function Index() {
           label={t('home.myRoutes')}
           onPress={() => router.push('/routes')}
         />
+        <Button label={t('home.myRides')} onPress={() => router.push('/rides')} />
+        <Button
+          variant="secondary"
+          label={t('home.createRide')}
+          onPress={() => router.push('/ride-form')}
+        />
       </View>
 
       <View style={styles.section}>

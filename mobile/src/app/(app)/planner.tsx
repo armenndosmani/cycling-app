@@ -230,6 +230,19 @@ export default function PlannerScreen() {
               label={t('planner.actions.myRoutes')}
               onPress={() => router.push('/routes')}
             />
+            {state.saved && !state.dirty ? (
+              <Button
+                variant="secondary"
+                label={t('planner.actions.createRide')}
+                accessibilityHint={t('planner.actions.createRideHint')}
+                onPress={() =>
+                  router.push({
+                    pathname: '/ride-form',
+                    params: { routeId: state.saved?.id ?? '' },
+                  })
+                }
+              />
+            ) : null}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

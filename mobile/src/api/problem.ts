@@ -15,6 +15,9 @@ export const PROBLEM_TYPES = {
   invalidCode: 'urn:cycling:problem:invalid-code',
   routeNotFound: 'urn:cycling:problem:route-not-found',
   routingUnavailable: 'urn:cycling:problem:routing-unavailable',
+  limitBelowParticipants: 'urn:cycling:problem:limit-below-participants',
+  ageRatingChangeBlocked: 'urn:cycling:problem:age-rating-change-blocked',
+  adultConfirmationRequired: 'urn:cycling:problem:adult-confirmation-required',
 } as const;
 
 /** Returns the body as Problem Details if it looks like one, otherwise undefined. */

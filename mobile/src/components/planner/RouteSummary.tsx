@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { errorMessage } from '@/api/errorMessage';
-import { routeFailure, type CalculatedRoute } from '@/api/routes';
+import { routeFailure, type CalculatedRoute, type SurfaceShare } from '@/api/routes';
 import { Button } from '@/components/Button';
 import { colors } from '@/constants/theme';
 import { formatKilometres, roundMeters } from '@/planner/format';
@@ -72,7 +72,7 @@ export function RouteSummary({ status, route, onRetry }: Props) {
         </View>
       ) : null}
 
-      {route ? <Surfaces route={route} /> : null}
+      {route ? <Surfaces surfaces={route.surfaces} /> : null}
     </View>
   );
 
@@ -84,9 +84,10 @@ export function RouteSummary({ status, route, onRetry }: Props) {
   }
 }
 
-function Surfaces({ route }: { route: CalculatedRoute }) {
+/** Surface breakdown in whole percentages; nothing when the route has no surface data. */
+export function Surfaces({ surfaces }: { surfaces: SurfaceShare[] }) {
   const { t } = useTranslation();
-  const shares = surfacePercentages(route.surfaces);
+  const shares = surfacePercentages(surfaces);
   if (shares.length === 0) return null;
 
   return (

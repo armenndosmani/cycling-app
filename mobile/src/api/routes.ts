@@ -198,42 +198,42 @@ function toSaveBody(route: SaveRouteBody): SaveRouteBody {
 
 type Json = Record<string, unknown>;
 
-function isObject(value: unknown): value is Json {
+export function isObject(value: unknown): value is Json {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function isFiniteNumber(value: unknown): value is number {
+export function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value);
 }
 
-function requireObject(value: unknown, what: string): Json {
+export function requireObject(value: unknown, what: string): Json {
   if (!isObject(value)) throw new InvalidResponseError(what);
   return value;
 }
 
-function requireNumber(value: unknown, what: string): number {
+export function requireNumber(value: unknown, what: string): number {
   if (!isFiniteNumber(value)) throw new InvalidResponseError(what);
   return value;
 }
 
-function requireString(value: unknown, what: string): string {
+export function requireString(value: unknown, what: string): string {
   if (typeof value !== 'string') throw new InvalidResponseError(what);
   return value;
 }
 
-function parseList<T>(value: unknown, what: string, parseItem: (item: unknown) => T): T[] {
+export function parseList<T>(value: unknown, what: string, parseItem: (item: unknown) => T): T[] {
   if (!Array.isArray(value)) throw new InvalidResponseError(what);
   return value.map(parseItem);
 }
 
-function parseDiscipline(value: unknown): Discipline {
+export function parseDiscipline(value: unknown): Discipline {
   if (typeof value === 'string' && (DISCIPLINES as readonly string[]).includes(value)) {
     return value as Discipline;
   }
   throw new InvalidResponseError('discipline');
 }
 
-function parseAscend(value: unknown): number | null {
+export function parseAscend(value: unknown): number | null {
   if (value === null || value === undefined) return null;
   return requireNumber(value, 'ascendMeters');
 }
@@ -246,7 +246,7 @@ function parsePosition(value: unknown): Position {
   return ele === undefined ? [lon, lat] : [lon, lat, ele];
 }
 
-function parseGeometry(value: unknown): LineString {
+export function parseGeometry(value: unknown): LineString {
   const geometry = requireObject(value, 'geometry');
   if (geometry.type !== 'LineString') throw new InvalidResponseError('geometry type');
   const coordinates = parseList(geometry.coordinates, 'coordinates', parsePosition);
@@ -254,7 +254,7 @@ function parseGeometry(value: unknown): LineString {
   return { type: 'LineString', coordinates };
 }
 
-function parseProfile(value: unknown): ProfilePoint[] {
+export function parseProfile(value: unknown): ProfilePoint[] {
   if (value === null || value === undefined) return [];
   return parseList(value, 'elevationProfile', (item) => {
     if (!Array.isArray(item) || item.length < 2) throw new InvalidResponseError('profile');
@@ -262,7 +262,7 @@ function parseProfile(value: unknown): ProfilePoint[] {
   });
 }
 
-function parseSurfaces(value: unknown): SurfaceShare[] {
+export function parseSurfaces(value: unknown): SurfaceShare[] {
   if (value === null || value === undefined) return [];
   return parseList(value, 'surfaces', (item) => {
     const surface = requireObject(item, 'surface');
@@ -284,7 +284,7 @@ export function parseCalculatedRoute(value: unknown): CalculatedRoute {
   };
 }
 
-function parseLatLon(value: unknown): LatLon {
+export function parseLatLon(value: unknown): LatLon {
   const point = requireObject(value, 'point');
   return { lat: requireNumber(point.lat, 'lat'), lon: requireNumber(point.lon, 'lon') };
 }

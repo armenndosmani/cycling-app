@@ -21,12 +21,14 @@ type Props = {
   /** Results near this point come first (the map centre, never the rider's GPS position) */
   near: LatLon | null;
   onSelect: (place: Place) => void;
+  /** Screen-reader hint of a result; defaults to adding it to the route */
+  resultHint?: string;
 };
 
 type Outcome = { query: string; places: Place[] } | { query: string; error: unknown };
 
 /** Place search through our own backend (self-hosted Photon). Search terms are never logged. */
-export function PlaceSearch({ near, onSelect }: Props) {
+export function PlaceSearch({ near, onSelect, resultHint }: Props) {
   const { t } = useTranslation();
   const [text, setText] = useState('');
   const [outcome, setOutcome] = useState<Outcome | null>(null);
@@ -98,7 +100,7 @@ export function PlaceSearch({ near, onSelect }: Props) {
               key={`${index}-${place.lat}-${place.lon}`}
               accessibilityRole="button"
               accessibilityLabel={place.label}
-              accessibilityHint={t('planner.search.resultHint')}
+              accessibilityHint={resultHint ?? t('planner.search.resultHint')}
               onPress={() => select(place)}
               style={({ pressed }) => [styles.result, pressed && styles.pressed]}
             >

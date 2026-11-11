@@ -44,6 +44,13 @@ Run lint and typecheck before declaring any task done.
 - The planner draft (`src/planner/plannerStore.ts`) is kept in memory only and reset on sign-out, because route points can reveal where a rider lives. Never persist or log coordinates.
 - Location: only `requestForegroundPermissionsAsync` on an explicit tap; background location is disabled in `app.json`.
 
+## Ride events
+
+- API contract (create, edit, publish, cancel, delete, my rides, details) and problem types: `src/api/rides.ts`. Plain-language messages per problem type: `src/rides/rideErrors.ts`.
+- Dates and times are wall-clock values in the meeting point's IANA zone (`src/rides/dateTime.ts`, `Intl` only); the picker (`@react-native-community/datetimepicker`) only supplies the wall-clock fields.
+- Show the exact meeting point and route only through `meetingDisplay` / `visibleRoute` (`src/rides/display.ts`): riders who have not joined see the generalised circle, never a point.
+- The ride form (`src/rides/rideFormStore.ts`) is in memory only and reset when the form closes and on sign-out, like the planner draft.
+
 ## Text and accessibility
 
 Follow `docs/accessibility.md` (in `mobile/`) for every screen. In short:
