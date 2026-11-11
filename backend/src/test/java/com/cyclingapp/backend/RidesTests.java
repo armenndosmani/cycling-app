@@ -250,11 +250,11 @@ class RidesTests {
 			.andExpect(jsonPath("$.distanceMeters").value(1234.0))
 			.andExpect(jsonPath("$.distanceIsPlanned").value(false))
 			.andExpect(jsonPath("$.targetDistanceKm").value(nullValue()));
-		// Without routeId and target distance the copy stays
+		// Without a routeId property the copy stays
 		update(admin, id, Map.of("name", "Renamed")).andExpect(jsonPath("$.ageRating").value("16+"))
 			.andExpect(jsonPath("$.distanceMeters").value(1234.0));
-		// routeId null with a target distance removes it
-		update(admin, id, Map.of("name", "Renamed", "targetDistanceKm", 45))
+		// An explicit null routeId removes it; the target distance applies again
+		update(admin, id, with(Map.of("name", "Renamed", "targetDistanceKm", 45), "routeId", null))
 			.andExpect(jsonPath("$.ageRating").value("18+"))
 			.andExpect(jsonPath("$.distanceMeters").value(nullValue()))
 			.andExpect(jsonPath("$.routeGeometry").value(nullValue()))
@@ -295,13 +295,52 @@ class RidesTests {
 		ride(admin, id).andExpect(jsonPath("$.ageRating").value("16+"))
 			.andExpect(jsonPath("$.distanceMeters").value(1234.0));
 		// Removing the route would make it 18+ too
-		update(admin, id, fullRide()).andExpect(status().isConflict());
+		update(admin, id, with(fullRide(), "routeId", null)).andExpect(status().isConflict());
 
 		// Once only adults have a place, the change goes through
 		jdbc.update("delete from ride_participants where user_id = ?::uuid", minor.id());
 		join(id, adult());
 		update(admin, id, with(fullRide(), "routeId", crossing)).andExpect(status().isOk())
 			.andExpect(jsonPath("$.ageRating").value("18+"));
+	}
+
+	@Test
+	void updateKeepsReplacesOrRemovesTheRouteCopy() throws Exception {
+		Rider admin = adult();
+		String inside = saveRoute(admin, ROUTE_INSIDE, "URBAN");
+		String crossing = saveRoute(admin, ROUTE_CROSSING, "ROAD");
+		String id = idOf(create(admin, with(fullRide(), "routeId", inside)));
+
+		// Missing routeId: the copy stays, even when a target distance is sent
+		assertThat(json.writeValueAsString(fullRide())).doesNotContain("routeId");
+		update(admin, id, fullRide()).andExpect(status().isOk())
+			.andExpect(jsonPath("$.distanceMeters").value(1234.0))
+			.andExpect(jsonPath("$.routeGeometry.coordinates.length()").value(3))
+			.andExpect(jsonPath("$.targetDistanceKm").value(nullValue()))
+			.andExpect(jsonPath("$.ageRating").value("16+"));
+
+		// A routeId replaces it
+		update(admin, id, with(fullRide(), "routeId", crossing)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.distanceMeters").value(4000.0))
+			.andExpect(jsonPath("$.routeGeometry.coordinates[1][0]").value(10.03))
+			.andExpect(jsonPath("$.ageRating").value("18+"));
+
+		// "routeId": null removes it; the target distance applies
+		update(admin, id, with(fullRide(), "routeId", null)).andExpect(status().isOk())
+			.andExpect(jsonPath("$.distanceMeters").value(nullValue()))
+			.andExpect(jsonPath("$.routeGeometry").value(nullValue()))
+			.andExpect(jsonPath("$.distanceIsPlanned").value(true))
+			.andExpect(jsonPath("$.targetDistanceKm").value(60.0))
+			.andExpect(jsonPath("$.ageRating").value("18+"));
+		assertThat(
+				jdbc.queryForObject("select route_geometry is null from rides where id = ?::uuid", Boolean.class, id))
+			.isTrue();
+
+		// Creating with "routeId": null is a ride without a route
+		create(admin, with(fullRide(), "routeId", null)).andExpect(status().isCreated())
+			.andExpect(jsonPath("$.distanceIsPlanned").value(true));
+		// Not a uuid: 400
+		update(admin, id, with(fullRide(), "routeId", "not-a-uuid")).andExpect(status().isBadRequest());
 	}
 
 	// Visibility

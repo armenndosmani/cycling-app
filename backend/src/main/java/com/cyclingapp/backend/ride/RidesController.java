@@ -36,6 +36,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Ride events. Needs an access token. What a rider sees depends on their role on the ride
@@ -99,7 +103,8 @@ class RidesController {
 	/**
 	 * A ride as the admin edits it. Only the name is required for a draft; publishing
 	 * checks the rest. Calculated route values are never accepted from the app: they come
-	 * from the saved route given by {@code routeId}.
+	 * from the saved route given by {@code routeId}. A missing {@code routeId} keeps the
+	 * ride's current route copy, {@code "routeId": null} removes it.
 	 */
 	record RideRequest(
 			@NotBlank @Size(min = 3, max = 80) @Pattern(regexp = "[^\\p{Cntrl}]*",
@@ -107,7 +112,7 @@ class RidesController {
 			@Size(max = 2000) String description, LocalDate startDate,
 			@Pattern(regexp = "([01]\\d|2[0-3]):[0-5]\\d", message = "must be a time like 07:30") String startTime,
 			@Size(max = 64) String timeZone, @Valid GeoPoint meetingPoint, Discipline discipline, Pace pace,
-			@Min(2) @Max(50) Integer participantLimit, AccessMode accessMode, UUID routeId,
+			@Min(2) @Max(50) Integer participantLimit, AccessMode accessMode, RouteIdField routeId,
 			@DecimalMin("1") @DecimalMax("500") Double targetDistanceKm) {
 
 		RideRequest {
@@ -118,7 +123,39 @@ class RidesController {
 
 		RideInput toInput() {
 			return new RideInput(name, description, startDate, (startTime != null) ? LocalTime.parse(startTime) : null,
-					timeZone, meetingPoint, discipline, pace, participantLimit, accessMode, routeId, targetDistanceKm);
+					timeZone, meetingPoint, discipline, pace, participantLimit, accessMode,
+					(routeId != null) ? routeId.value() : null, routeId != null && routeId.value() == null,
+					targetDistanceKm);
+		}
+
+	}
+
+	/**
+	 * {@code routeId} as sent: the Java field is null when the property is missing, and a
+	 * {@code RouteIdField} with a null value when it is {@code null} in the JSON.
+	 */
+	@JsonDeserialize(using = RouteIdField.Deserializer.class)
+	record RouteIdField(UUID value) {
+
+		static final class Deserializer extends ValueDeserializer<RouteIdField> {
+
+			@Override
+			public RouteIdField deserialize(JsonParser parser, DeserializationContext context) {
+				return new RouteIdField(context.readValue(parser, UUID.class));
+			}
+
+			// "routeId": null
+			@Override
+			public RouteIdField getNullValue(DeserializationContext context) {
+				return new RouteIdField(null);
+			}
+
+			// No routeId property
+			@Override
+			public Object getAbsentValue(DeserializationContext context) {
+				return null;
+			}
+
 		}
 
 	}

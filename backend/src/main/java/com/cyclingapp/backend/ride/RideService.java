@@ -119,8 +119,8 @@ public class RideService implements AccountDeletionHook {
 	}
 
 	/**
-	 * Replaces the ride's details. A {@code routeId} attaches or replaces the route copy;
-	 * no {@code routeId} but a target distance removes it; neither keeps it.
+	 * Replaces the ride's details. A {@code routeId} attaches or replaces the route copy,
+	 * {@code removeRoute} (an explicit null routeId) removes it, otherwise it is kept.
 	 */
 	@Transactional
 	public Ride update(UUID userId, UUID id, RideInput input) {
@@ -138,7 +138,7 @@ public class RideService implements AccountDeletionHook {
 			routeDiscipline = saved.discipline();
 			routeChanged = true;
 		}
-		else if (input.targetDistanceKm() != null && ride.route() != null) {
+		else if (input.removeRoute() && ride.route() != null) {
 			route = null;
 			routeChanged = true;
 		}
@@ -472,10 +472,16 @@ public class RideService implements AccountDeletionHook {
 
 	}
 
-	/** What the admin sends; every field may be missing while the ride is a draft. */
+	/**
+	 * What the admin sends; every field may be missing while the ride is a draft.
+	 *
+	 * @param routeId a saved route to copy into the ride, null for none or to keep the
+	 * current copy
+	 * @param removeRoute remove the current route copy (only for updates)
+	 */
 	public record RideInput(String name, String description, LocalDate startDate, LocalTime startTime, String timeZone,
 			GeoPoint meetingPoint, Discipline discipline, Pace pace, Integer participantLimit, AccessMode accessMode,
-			UUID routeId, Double targetDistanceKm) {
+			UUID routeId, boolean removeRoute, Double targetDistanceKm) {
 
 	}
 
