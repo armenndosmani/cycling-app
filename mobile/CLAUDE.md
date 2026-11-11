@@ -29,6 +29,14 @@ Run lint and typecheck before declaring any task done.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 
+## Text and accessibility
+
+Follow `docs/accessibility.md` (in `mobile/`) for every screen. In short:
+
+- No user-facing string literals in components: all text, including accessibility labels and error messages, comes from `src/i18n/en.json` via `useTranslation()` (keys are type-checked).
+- Every interactive element has a role and an accessible name; every input has an `accessibilityLabel`. Use `src/components/Button.tsx` for buttons.
+- Touch targets at least 44 pt; never disable font scaling; theme colours only; never colour alone to carry meaning.
+
 ## Building with EAS
 
 Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
