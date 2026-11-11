@@ -19,7 +19,7 @@ When a decision is made in Discord or in a session, append it to `docs/decisions
 
 ## Stack (confirmed, see `docs/decisions.md`)
 
-One repo. No web app for now.
+One repo. No web app, except a static invite landing page (see decisions).
 
 - `mobile/`: React Native with Expo (SDK 58), TypeScript, Expo Router, one codebase for iOS and Android. See `mobile/CLAUDE.md` for Expo rules.
 - `backend/`: Spring Boot 4.1 on Java 25, Maven, REST + WebSocket (chat), Flyway migrations
