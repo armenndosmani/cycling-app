@@ -28,10 +28,10 @@ Goal: keep the always-loaded context small and load everything else only when ne
 | Product knowledge | `docs/product-context.md` | On demand | Done |
 | Decisions log | `docs/decisions.md` | On demand | Done |
 | Specs | `docs/specs/` | On demand, one per feature | Template done |
-| Path-scoped rules | `.claude/rules/*.md` with `paths:` frontmatter | Only when matching files are touched | Planned, create per code area as it appears |
-| Skills | `.claude/skills/<name>/SKILL.md` | Only when invoked | Planned |
-| Subagents | `.claude/agents/<name>.md` | Separate context, only summary returns | Planned |
-| Hooks | `.claude/settings.json` | Filter output before it reaches context | Planned |
+| Path-scoped rules | `.claude/rules/*.md` with `paths:` frontmatter | Only when matching files are touched | `database.md` done; add more per code area as it appears |
+| Skills | `.claude/skills/<name>/SKILL.md` | Only when invoked | `write-spec`, `privacy-review` done; `architecture`, `ship` planned |
+| Subagents | `.claude/agents/<name>.md` | Separate context, only summary returns | `implementer`, `test-runner`, `reviewer` done |
+| Hooks | `.claude/settings.json` | Guard hook: blocks .env access, push to main, gh pr merge | Guard done; format/lint and output-filter hooks planned |
 
 Planned skills:
 - `write-spec`: turn a Discord message into `docs/specs/<feature>.md` using the template.
