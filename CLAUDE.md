@@ -30,11 +30,12 @@ Third-party services (map tiles, routing, push notifications) are NOT decided ye
 ## Commands
 
 Backend (run from `backend/`, needs JDK 25 as `JAVA_HOME` and Docker running):
-- `./mvnw spring-boot:run`: start the API; Postgres starts automatically from `compose.yaml`
+- `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`: start the API on port 8080; Postgres starts automatically from `compose.yaml`. The `dev` profile enables `/v3/api-docs` and Swagger UI (off by default)
 - `./mvnw verify`: build and run tests (Testcontainers starts Postgres)
+- Only `/actuator/health` is exposed; keep other actuator endpoints closed
 
 Mobile (run from `mobile/`):
-- `npx expo start`: dev server
+- `npx expo start`: dev server. The app calls the backend on the dev server's host, port 8080, unless `EXPO_PUBLIC_API_URL` is set (see `mobile/.env.example`)
 - `npx tsc --noEmit` and `npx expo lint`: typecheck and lint, run both before declaring work done
 - `npx expo install <pkg>`: add dependencies (never plain `npm install <pkg>`)
 
