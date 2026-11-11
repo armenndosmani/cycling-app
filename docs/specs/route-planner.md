@@ -1,6 +1,6 @@
 # Route planner
 
-**Requested by:** Product baseline (`docs/product-context.md` sections 3C and 9) · **Date:** 2026-11-11 · **Status:** Draft
+**Requested by:** Product baseline (`docs/product-context.md` sections 3C and 9) · **Date:** 2026-11-11 · **Status:** Decisions made, waiting for "go"
 
 ## Goal
 Let a rider plan a cycling route on a map for their discipline (road, gravel, MTB, urban), see how long and how hilly it is, and save it privately so it can become a group ride. This is the first step of the core loop and the first development priority.
@@ -23,7 +23,8 @@ Let a rider plan a cycling route on a map for their discipline (road, gravel, MT
 - [ ] The map shows the attribution its data licence requires (e.g. "© OpenStreetMap contributors").
 
 **Building a route**
-- [ ] The rider sets a start and a destination by tapping the map or by searching for a place.
+- [ ] The rider sets a start and a destination by tapping the map or by searching for a place. The destination may be the same point as the start (a loop).
+- [ ] Every segment follows mapped roads and paths; straight off-road segments are not possible.
 - [ ] Once start and destination are set, the app calculates and draws the route without an extra tap.
 - [ ] The rider can add a waypoint between existing points, drag any point to move it, and delete any waypoint. The route recalculates after each change.
 - [ ] Waypoints can be reordered.
@@ -43,6 +44,7 @@ Let a rider plan a cycling route on a map for their discipline (road, gravel, MT
 - [ ] The app shows total elevation gain in metres, rounded to the nearest metre, where elevation data exists for the area.
 - [ ] The app shows an elevation profile along the route. Touching the profile marks the matching point on the map.
 - [ ] Where elevation data is missing, the app says "Elevation not available" instead of showing 0.
+- [ ] The app shows a surface breakdown as percentages of the route (e.g. asphalt, gravel, unpaved, unknown), based on the map data.
 
 **Saving**
 - [ ] The rider can save the route with a name (1 to 80 characters, required) and an optional note (up to 1,000 characters).
@@ -51,7 +53,7 @@ Let a rider plan a cycling route on a map for their discipline (road, gravel, MT
 - [ ] Drafts never appear in discovery, search, other riders' profiles or any public endpoint.
 - [ ] The rider sees a list of their saved routes, newest first, with name, discipline, distance and elevation gain.
 - [ ] The rider can open, edit, rename and delete a saved route. Deleting asks for confirmation and removes the route from the server.
-- [ ] A route that is used by a ride event cannot be deleted while the event is upcoming; the app explains why. (Behaviour for editing such a route is an open question.)
+- [ ] A ride event stores its own copy of the route. Editing or deleting the saved route does not change any ride that already uses it.
 - [ ] Unsaved changes are not lost when the app goes to the background.
 
 **Quality**
@@ -63,9 +65,9 @@ Let a rider plan a cycling route on a map for their discipline (road, gravel, MT
 - **Personal data involved:** saved routes linked to an account, their names and notes, and search terms entered in place search. Start and end points can reveal where a rider lives or works.
 - **Who can see it:** only the route's owner. A route becomes visible to others only through a published ride event, under that event's rules (see `ride-event-creation.md`).
 - **Location:** only on an explicit "Use my location" tap, while the app is in use, never stored on the server.
-- **Third parties:** route calculation, place search and map tiles each send coordinates or search terms to whatever serves them. If that is an outside company, riders' planned routes and searches reach that company. The proposal is to self-host all three so nothing leaves our servers; this needs a decision before implementation.
+- **Third parties:** route calculation, place search and map tiles each send coordinates or search terms to whatever serves them. All three are self-hosted on our own EU server (decided), so riders' planned routes and searches never reach an outside company.
 - **Logs:** no coordinates, route geometry or search terms in application logs.
-- **Retention:** a saved route is kept until the owner deletes it or deletes their account. Deleted routes are removed from the database immediately and from backups when they expire (backup retention to be defined).
+- **Retention:** a saved route is kept until the owner deletes it or deletes their account. Deleted routes are removed from the database immediately and from backups when they expire, within 30 days.
 - **Data export:** saved routes must be included in the rider's personal data export (separate feature).
 - **Legal review:** OpenStreetMap's licence (ODbL) may apply to a large stored database of routes derived from OSM. Map attribution requirements. No claim that any of this is "GDPR exempt".
 
@@ -73,23 +75,24 @@ Let a rider plan a cycling route on a map for their discipline (road, gravel, MT
 - Turn-by-turn navigation and recording a ride
 - Offline maps
 - Importing GPX/FIT files, and exporting routes to files or devices (separate specs)
-- Surface breakdown per route (e.g. "60% asphalt"), unless the BA moves it in (open question)
 - Sharing a route on its own, outside a ride event
 - Round-trip suggestions ("give me a 50 km loop")
 - Own trails layer and club routes
 - 3D terrain
 - Imperial units
 
+## Decisions (2026-11-11, see `docs/decisions.md`)
+- **Map tiles:** self-hosted OpenStreetMap vector tiles (Protomaps basemap + Martin) on our own server; MapTiler as fallback.
+- **Routing engine:** self-hosted GraphHopper, one profile per discipline (road, gravel, MTB, urban).
+- **Place search:** self-hosted Photon.
+- **Storage:** PostGIS for route geometry.
+- **Launch region:** decided before release. Development and the proof of concept use a small OpenStreetMap extract.
+- **Loops:** allowed. The destination may be the same point as the start.
+- **Off-road segments:** not in the MVP. Every segment follows the map.
+- **Surface breakdown:** in the first version.
+- **Units:** kilometres and metres only.
+- **Routes used by events:** a ride keeps its own copy of the route. Editing or deleting the saved route never changes an existing ride.
+- **Backups:** deleted data stays in backups for at most 30 days (legal review pending).
+
 ## Open questions
-- **Map tiles:** self-hosted OpenStreetMap tiles (proposal) or a hosted provider? Blocks implementation. *(BA, with developer input on cost and effort)*
-- **Routing engine:** self-hosted GraphHopper with four discipline profiles (proposal), or another engine or a hosted API? Hosted APIs may forbid storing results. Blocks implementation. *(BA + developer)*
-- **Place search:** self-hosted (proposal: Photon) or a hosted geocoder? *(BA + developer)*
-- **PostGIS:** store route geometry with PostGIS (proposal) or as plain encoded polylines? *(developer)*
-- **Launch region:** which country or region must the map and routing cover first? *(BA)*
-- **Loops:** may the destination be the same point as the start (a loop ride)? Most group rides start and finish at the same place. *(BA)*
-- **Off-road segments:** may a rider draw a straight segment where no mapped path exists (useful for MTB and gravel), or must every segment follow the map? *(BA)*
-- **Limits:** 25 waypoints and the 3-second target are proposals. Are they right? *(developer)*
-- **Surface breakdown:** in or out of the first version? *(BA)*
-- **Units:** kilometres and metres only for the MVP? *(BA)*
-- **Routes used by events:** if the owner edits a route that an upcoming ride uses, does the ride change too, get a copy, or is editing blocked? Ties to "route editing after an event is published" in product-context section 8. *(BA)*
-- **Backup retention period** for deleted data. *(developer, with legal review)*
+- **Limits:** 25 waypoints and the 3-second target for routes up to 200 km are proposals, to confirm after the proof of concept. *(developer)*
