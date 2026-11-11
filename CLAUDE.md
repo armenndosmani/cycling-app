@@ -21,15 +21,22 @@ When a decision is made in Discord or in a session, append it to `docs/decisions
 
 One repo. No web app for now.
 
-- `mobile/`: React Native with Expo, one codebase for iOS and Android
-- `backend/`: Spring Boot, REST + WebSocket (chat)
-- PostgreSQL, managed by the team; S3-compatible file storage for avatars
+- `mobile/`: React Native with Expo (SDK 58), TypeScript, Expo Router, one codebase for iOS and Android. See `mobile/CLAUDE.md` for Expo rules.
+- `backend/`: Spring Boot 4.1 on Java 25, Maven, REST + WebSocket (chat), Flyway migrations
+- PostgreSQL 18, managed by the team; S3-compatible file storage for avatars
 
 Third-party services (map tiles, routing, push notifications) are NOT decided yet.
 
 ## Commands
 
-TBD: fill in once the project is initialized (dev, build, test, lint, e2e).
+Backend (run from `backend/`, needs JDK 25 as `JAVA_HOME` and Docker running):
+- `./mvnw spring-boot:run`: start the API; Postgres starts automatically from `compose.yaml`
+- `./mvnw verify`: build and run tests (Testcontainers starts Postgres)
+
+Mobile (run from `mobile/`):
+- `npx expo start`: dev server
+- `npx tsc --noEmit` and `npx expo lint`: typecheck and lint, run both before declaring work done
+- `npx expo install <pkg>`: add dependencies (never plain `npm install <pkg>`)
 
 ## Privacy rules (non-negotiable)
 
