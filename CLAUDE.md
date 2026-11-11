@@ -56,7 +56,8 @@ Mobile (run from `mobile/`):
 
 ## Working rules
 
-- Never commit to `main`. One branch per feature: `feat/<name>` or `fix/<name>`.
+- Never commit to `main`. Every change starts from a GitHub issue. Branch: `<type>/<issue>-<short-name>` (types: `feat`, `fix`, `docs`, `spec`), e.g. `feat/31-formatters`. PR title starts with the issue number(s), e.g. `[#31] Formatters ...`, and the PR body says `Closes #31`.
+- Never rename a branch that has an open PR: GitHub closes the PR.
 - Never merge pull requests and never deploy to production. The developer does both.
 - Never read, print or commit `.env` files or secrets.
 - Prefer simple, buildable MVP choices. Don't add features beyond the spec.

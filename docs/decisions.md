@@ -65,3 +65,4 @@ Confirmed decisions only. One line each: `YYYY-MM-DD | decision | why`. Newest a
 2026-11-11 | The app is always dark in the MVP; a light theme may come later | One theme to design and test
 2026-11-11 | Until go-live, every PR is merged once CI is green; the team runs a final test before production | Not live yet. Merging stays manual until the guard hook and settings are changed by the developer
 2026-11-11 | Everything to check by hand before go-live (legal review, accounts, final tests) lives in docs/launch-checklist.md | One list to work through at the end
+2026-11-11 | Naming: every change starts from a GitHub issue; branches are `<type>/<issue>-<short-name>`, PR titles start with `[#<issue>]`, PR bodies say `Closes #<issue>` | Every PR traces back to an issue; issues close automatically on merge
