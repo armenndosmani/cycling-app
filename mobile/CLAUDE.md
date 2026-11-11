@@ -29,6 +29,22 @@ Run lint and typecheck before declaring any task done.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 
+## API and sign-in
+
+- `src/api/client.ts` `request()` for public endpoints; `session.authorized()` (`src/auth/session.ts`) for everything that needs sign-in. It adds the Bearer token and refreshes once on 401 (one shared refresh for concurrent requests).
+- Errors are `ApiError` with parsed Problem Details; show them with `errorMessage()` (`src/api/errorMessage.ts`), never the backend's text.
+- Tokens live only in `expo-secure-store` (`src/auth/tokenStorage.ts`). Never put them in AsyncStorage, files, route params or logs.
+- `useAuth()` (`src/auth/AuthProvider.tsx`) gives the session state and profile. Routes are guarded with `Stack.Protected` in `src/app/_layout.tsx`: `(auth)` when signed out, `display-name` until the rider has one, `(app)` otherwise.
+- Unit tests: `npm test` (Vitest in Node). Keep testable logic free of `react-native` imports; mock Expo modules with `vi.mock`.
+
+## Text and accessibility
+
+Follow `docs/accessibility.md` (in `mobile/`) for every screen. In short:
+
+- No user-facing string literals in components: all text, including accessibility labels and error messages, comes from `src/i18n/en.json` via `useTranslation()` (keys are type-checked).
+- Every interactive element has a role and an accessible name; every input has an `accessibilityLabel`. Use `src/components/Button.tsx` for buttons.
+- Touch targets at least 44 pt; never disable font scaling; theme colours only; never colour alone to carry meaning.
+
 ## Building with EAS
 
 Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.

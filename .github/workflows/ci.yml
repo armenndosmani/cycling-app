@@ -92,6 +92,7 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npx expo lint
+      - run: npm test
 
   security:
     name: Security (known vulnerabilities)
