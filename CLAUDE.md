@@ -31,10 +31,11 @@ Self-hosted on our own server: map tiles (Protomaps + Martin), routing (GraphHop
 ## Commands
 
 Backend (run from `backend/`, needs JDK 25 as `JAVA_HOME` and Docker running):
-- `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`: start the API on port 8080; Postgres and Mailpit start automatically from `compose.yaml`. Sign-in emails land in Mailpit (http://localhost:8025), never in a real inbox. The `dev` profile enables `/v3/api-docs` and Swagger UI (off by default)
+- `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`: start the API on port 8080; Postgres and Mailpit start automatically from `compose.yaml` (Postgres image includes PostGIS). Sign-in emails land in Mailpit (http://localhost:8025), never in a real inbox. The `dev` profile enables `/v3/api-docs` and Swagger UI (off by default)
 - Outside dev and tests the API does not start without: `APP_AUTH_JWT_SECRET` (at least 32 bytes, e.g. `openssl rand -base64 48`), `APP_MAIL_FROM`, and SMTP settings `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`, `SPRING_MAIL_PASSWORD` (Mailjet). Behind a reverse proxy also set `SERVER_FORWARD_HEADERS_STRATEGY=native`, or every rider shares one IP rate limit
 - `./mvnw verify`: build and run tests (Testcontainers starts Postgres). Fails on unformatted code
 - `./mvnw spring-javaformat:apply`: format the backend (spring-javaformat, tabs)
+- Local map stack (tiles, routing, search; never started by bootRun or tests): `./geo/download-dev-data.sh`, then `docker compose --profile geo up -d`. Map gateway http://localhost:3000, GraphHopper :8989, Photon :2322. See `backend/geo/README.md`
 - Only `/actuator/health` is exposed; keep other actuator endpoints closed
 - Secure by default (`config/SecurityConfig.java`): every endpoint returns 401 unless a rule opens it. A new feature opens only its own endpoints, with an explicit authorization rule and a test for it
 - Errors are RFC 9457 Problem Details (`web/ApiExceptionHandler.java`); never return exception messages, stack traces or rejected input values

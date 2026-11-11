@@ -13,7 +13,8 @@ class TestcontainersConfiguration {
 	@Bean
 	@ServiceConnection
 	PostgreSQLContainer postgresContainer() {
-		return new PostgreSQLContainer(DockerImageName.parse("postgres:18"));
+		return new PostgreSQLContainer(
+				DockerImageName.parse("postgis/postgis:18-3.7").asCompatibleSubstituteFor("postgres"));
 	}
 
 	// Emails are captured instead of sent, so tests can read codes and nothing reaches a

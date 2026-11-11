@@ -12,4 +12,4 @@ paths:
 - No SQL or JPQL built by string concatenation. Use parameters.
 - Personal data columns: note the retention rule in the migration comment, or list it as an open question in the spec.
 - Seed and test data are fake. Never real names, emails or locations.
-- PostGIS is proposed but not confirmed. Do not add extensions without a decision in `docs/decisions.md`.
+- PostGIS is enabled (`V2__postgis.sql`, decided 2026-11-11). Do not add other extensions without a decision in `docs/decisions.md`.

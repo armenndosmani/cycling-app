@@ -6,7 +6,9 @@ Legend: **Who:** L = lawyer, T = team (developer + BA), D = developer.
 
 ## Legal review (L)
 - [ ] OpenStreetMap licence (ODbL): does our stored database of routes derived from OSM count as a derivative database, and what must we publish or attribute?
-- [ ] Map attribution shown in the app meets the OSM and Protomaps requirements
+- [ ] Map attribution shown in the app meets the OSM and Protomaps requirements ("© OpenStreetMap contributors", linked to openstreetmap.org/copyright)
+- [ ] Licence notices in the app for bundled map assets: Noto Sans fonts (SIL OFL 1.1), Protomaps sprites (derived from MIT-licensed tangrams/icons)
+- [ ] Elevation data source for production and its licence (development uses NASA SRTM, public domain; Copernicus or other DEMs need attribution)
 - [ ] Terms of use, including:
   - [ ] age self-declaration (16+, 18+ for rides outside cities) and that false age declarations break the terms; suspension or deletion of the account
   - [ ] "rides are organised by riders, not by us"; riders join at their own risk and judge their own fitness
@@ -41,4 +43,6 @@ Legend: **Who:** L = lawyer, T = team (developer + BA), D = developer.
 - [ ] Backups configured and a restore tested
 - [ ] Admin app or at least the moderation endpoints in place (issue #30)
 - [ ] Production secrets set: `APP_AUTH_JWT_SECRET` (random, at least 32 bytes), Mailjet SMTP credentials, `APP_MAIL_FROM` on our domain (SPF/DKIM set up)
+- [ ] Production geo data for the launch region: OSM extract, Protomaps tiles, Photon data, elevation; GraphHopper and Photon memory sized for it (dev: `backend/geo/README.md`)
+- [ ] The production database has the PostGIS extension, or the app's database role may create it (migration `V2__postgis.sql`)
 - [ ] Reverse proxy passes the client IP (`SERVER_FORWARD_HEADERS_STRATEGY`), so sign-in rate limits work per rider; rate limits are in memory and assume a single backend instance

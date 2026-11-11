@@ -1,0 +1,16 @@
+// Gravel: used on top of bike.json and bike_elevation.json (see ../config.yml).
+// Makes paved and busy roads less attractive, so compacted, gravel and dirt surfaces and
+// good tracks win more often, and avoids surfaces that are hard to ride on a gravel bike.
+// Untagged surfaces (MISSING) stay neutral: surface is often not tagged in OSM.
+// A starting point to tune with real rides, not a final model.
+{
+  "priority": [
+    { "if": "surface == ASPHALT || surface == CONCRETE || surface == PAVED || surface == PAVING_STONES", "multiply_by": "0.6" },
+    { "else_if": "surface == COBBLESTONE", "multiply_by": "0.5" },
+    { "else_if": "surface == SAND || surface == GRASS || surface == WOOD || surface == OTHER", "multiply_by": "0.3" },
+    { "if": "track_type == GRADE4 || track_type == GRADE5", "multiply_by": "0.5" },
+    { "if": "road_class == PRIMARY || road_class == TRUNK", "multiply_by": "0.3" },
+    { "else_if": "road_class == SECONDARY", "multiply_by": "0.6" },
+    { "if": "mtb_rating > 1", "multiply_by": "0.5" }
+  ]
+}
