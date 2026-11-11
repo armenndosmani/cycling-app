@@ -2,7 +2,7 @@
 
 ## 1. Project summary
 
-Working concept: a privacy-first cycling community app available on mobile and in the browser.
+Working concept: a privacy-first cycling community app for iOS and Android.
 
 The product helps cyclists plan routes, organize group rides, discover local cycling communities, and form a ride-specific group (“peloton”). It is not primarily a performance tracker or leaderboard app.
 
@@ -22,7 +22,7 @@ The working product identity and name are not finalized.
 - **Visual style:** Premium, minimalist, dark interface with subtle green accents.
 - **Discovery:** Local rides and nearby communities, with location chosen by the user wherever possible.
 - **First feature priority:** Route planner and event creation.
-- **Platforms:** Mobile app and responsive browser app.
+- **Platforms:** Mobile app for iOS and Android. No web app for now (decided 2026-10-25). Whether ride invite links need a minimal public web page is an open question.
 - **Product values:** Simplicity, good visual design, community, privacy by design, and GDPR-aware implementation.
 
 Working tagline idea: “Ride together. Ride your way.” This is a concept, not a final brand decision.
@@ -118,19 +118,20 @@ Principles:
 
 **Important legal qualification:** Minimizing data does not mean GDPR does not apply. Account details, handles, avatars, messages, and identifiable route information may be personal data. GDPR and other applicable obligations need legal assessment, including lawful basis, privacy notices, processor agreements, retention, and user rights. Do not claim the app is “GDPR exempt.”
 
-## 5. Proposed technical direction (not finalized)
+## 5. Technical direction
 
-Potential architecture to evaluate:
-- **Mobile:** React Native with Expo
-- **Browser:** React responsive web app
-- **Backend/data:** PostgreSQL, potentially through Supabase or a comparable managed backend
-- **Maps:** MapLibre plus a suitable tile provider
-- **Routing:** Cycling-aware routing provider/service
-- **Realtime chat:** managed realtime service or a self-hosted option
+Confirmed (see `docs/decisions.md` for versions and reasons):
+- **Mobile:** React Native with Expo, one codebase for iOS and Android
+- **Backend:** Spring Boot (Java), REST for the app, WebSocket for chat
+- **Database:** PostgreSQL, run by the team
+- **Files:** S3-compatible object storage for avatars (provider open)
 
-Mobile and browser clients should use the same backend identity model, event data, and authorization rules.
+Not decided (proposals from 29 October 2026 shared with the team outside the repo, waiting for the BA):
+- **Maps:** MapLibre plus a tile source (proposal: self-hosted OpenStreetMap tiles)
+- **Routing:** a cycling-aware routing engine (proposal: self-hosted GraphHopper)
+- **Address search, PostGIS, hosting, push notifications**
 
-This is a proposal only. Compare costs, vendor lock-in, security, privacy, map/routing coverage, maintenance burden, and deployment options before deciding. Do not assume a specific provider has already been selected.
+Authorization is enforced in the backend. Do not assume a provider for anything in the "not decided" list; compare costs, lock-in, security, privacy, coverage and maintenance before deciding.
 
 ## 6. MVP scope
 
@@ -145,7 +146,7 @@ Initial release should focus on:
 8. Ride participant list and capacity
 9. Private ride-specific chat
 10. Privacy controls, account deletion, and basic moderation
-11. Responsive browser experience and mobile experience
+11. Mobile experience on iOS and Android
 
 Likely defer until later:
 - Strava integration
@@ -186,7 +187,7 @@ Discuss and document:
 
 ## 9. Current status
 
-This is an early product concept and planning stage. No final brand name, architecture, map provider, routing provider, or launch geography has been confirmed. The first planned deliverable is a detailed route-planner and event-creation specification, potentially preceded by a clickable prototype.
+Early stage. The architecture and stack are confirmed and the project skeleton, CI and Claude Code setup are on `main`. No final brand name, map provider, routing provider, hosting or launch geography has been confirmed. The first planned deliverables are the route-planner and event-creation specifications in `docs/specs/`, potentially followed by a clickable prototype.
 
 When discussing this project in a new chat:
 - Treat this file as the current baseline, not as a finalized specification.

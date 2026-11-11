@@ -6,7 +6,7 @@ Team of two. The **developer** builds, reviews and merges. The **BA** (business 
 
 ## Status
 
-Early stage. First priority: route planner and event creation. Stack is decided (see below). Product name, hosting, map/routing providers and launch geography are NOT decided. Never assume a provider: propose options with trade-offs (cost, privacy, lock-in, coverage) and let the team decide.
+Early stage. First priority: route planner and event creation. Stack is decided (see below). Product name and launch geography are NOT decided. Hosting is Hetzner (EU); maps, routing and place search are self-hosted (see decisions). Never assume a provider: propose options with trade-offs (cost, privacy, lock-in, coverage) and let the team decide.
 
 ## Where knowledge lives (read on demand)
 
@@ -14,29 +14,34 @@ Early stage. First priority: route planner and event creation. Stack is decided 
 - `docs/setup-and-workflow.md`: how this team works with you (Discord, context strategy, CI/CD, tools)
 - `docs/decisions.md`: confirmed decisions. Only entries here are confirmed; everything else is a suggestion or open question
 - `docs/specs/`: one spec per feature, based on `docs/specs/_template.md`
+- `docs/launch-checklist.md`: manual checks before going live (legal review, accounts, final tests). Add anything flagged "check later" here, and remind the developer of this list before any production release
 
 When a decision is made in Discord or in a session, append it to `docs/decisions.md` as `YYYY-MM-DD | decision | why`.
 
 ## Stack (confirmed, see `docs/decisions.md`)
 
-One repo. No web app for now.
+One repo. No web app, except a static invite landing page (see decisions).
 
 - `mobile/`: React Native with Expo (SDK 58), TypeScript, Expo Router, one codebase for iOS and Android. See `mobile/CLAUDE.md` for Expo rules.
 - `backend/`: Spring Boot 4.1 on Java 25, Maven, REST + WebSocket (chat), Flyway migrations
 - PostgreSQL 18, managed by the team; S3-compatible file storage for avatars
 
-Third-party services (map tiles, routing, push notifications) are NOT decided yet.
+Self-hosted on our own server: map tiles (Protomaps + Martin), routing (GraphHopper), place search (Photon), PostGIS. Transactional email: Mailjet. Push notifications: direct APNs/FCM, no third-party push service.
 
 ## Commands
 
 Backend (run from `backend/`, needs JDK 25 as `JAVA_HOME` and Docker running):
 - `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`: start the API on port 8080; Postgres starts automatically from `compose.yaml`. The `dev` profile enables `/v3/api-docs` and Swagger UI (off by default)
-- `./mvnw verify`: build and run tests (Testcontainers starts Postgres)
+- `./mvnw verify`: build and run tests (Testcontainers starts Postgres). Fails on unformatted code
+- `./mvnw spring-javaformat:apply`: format the backend (spring-javaformat, tabs)
 - Only `/actuator/health` is exposed; keep other actuator endpoints closed
+- Secure by default (`config/SecurityConfig.java`): every endpoint returns 401 unless a rule opens it. A new feature opens only its own endpoints, with an explicit authorization rule and a test for it
+- Errors are RFC 9457 Problem Details (`web/ApiExceptionHandler.java`); never return exception messages, stack traces or rejected input values
 
 Mobile (run from `mobile/`):
 - `npx expo start`: dev server. The app calls the backend on the dev server's host, port 8080, unless `EXPO_PUBLIC_API_URL` is set (see `mobile/.env.example`)
-- `npx tsc --noEmit` and `npx expo lint`: typecheck and lint, run both before declaring work done
+- `npx tsc --noEmit` and `npx expo lint`: typecheck and lint (lint includes the Prettier check), run both before declaring work done
+- `npm run format`: format the mobile code with Prettier
 - `npx expo install <pkg>`: add dependencies (never plain `npm install <pkg>`)
 
 ## Privacy rules (non-negotiable)
@@ -53,7 +58,8 @@ Mobile (run from `mobile/`):
 
 ## Working rules
 
-- Never commit to `main`. One branch per feature: `feat/<name>` or `fix/<name>`.
+- Never commit to `main`. Every change starts from a GitHub issue. Branch: `<type>/<issue>-<short-name>` (types: `feat`, `fix`, `docs`, `spec`), e.g. `feat/31-formatters`. PR title starts with the issue number(s), e.g. `[#31] Formatters ...`, and the PR body says `Closes #31`.
+- Never rename a branch that has an open PR: GitHub closes the PR.
 - Never merge pull requests and never deploy to production. The developer does both.
 - Never read, print or commit `.env` files or secrets.
 - Prefer simple, buildable MVP choices. Don't add features beyond the spec.

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @Import(TestcontainersConfiguration.class)
@@ -20,7 +21,7 @@ class ApiEndpointsTests {
 	private MockMvc mvc;
 
 	@Test
-	void healthIsUpWithoutDetails() throws Exception {
+	void healthIsPublicAndUpWithoutDetails() throws Exception {
 		mvc.perform(get("/actuator/health"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").value("UP"))
@@ -28,13 +29,27 @@ class ApiEndpointsTests {
 	}
 
 	@Test
-	void otherActuatorEndpointsAreNotExposed() throws Exception {
+	void otherActuatorEndpointsAreClosed() throws Exception {
+		mvc.perform(get("/actuator/env")).andExpect(status().isUnauthorized());
+		mvc.perform(get("/actuator/beans")).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser
+	void otherActuatorEndpointsAreNotExposedEvenWhenAuthenticated() throws Exception {
 		mvc.perform(get("/actuator/env")).andExpect(status().isNotFound());
 		mvc.perform(get("/actuator/beans")).andExpect(status().isNotFound());
 	}
 
 	@Test
-	void apiDocsAreDisabledByDefault() throws Exception {
+	void apiDocsAreClosedByDefault() throws Exception {
+		mvc.perform(get("/v3/api-docs")).andExpect(status().isUnauthorized());
+		mvc.perform(get("/swagger-ui/index.html")).andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser
+	void apiDocsAreDisabledByDefaultEvenWhenAuthenticated() throws Exception {
 		mvc.perform(get("/v3/api-docs")).andExpect(status().isNotFound());
 		mvc.perform(get("/swagger-ui/index.html")).andExpect(status().isNotFound());
 	}
